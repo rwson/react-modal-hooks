@@ -9,7 +9,7 @@
 yarn add react-modal-hooks-better    #or npm install react-modal-hooks-better
 ```
 
-```react
+```jsx
 //	index.tsx
 //	import Modules...
 import { ModalProvider } from 'react-modal-hooks-better'
@@ -50,14 +50,14 @@ export default () => {
   const [ Modal1Component, { open: openModal1, close, closeAll } ] = useModal('modal1-id', (props) => <Modal1 {...props} onCancel={close} closeAll={closeAll} />)
   
   return (
-     <>
+     <div>
        <LazyModal1Component />
        <Modal1Component />
        <Button onClick={() => openModal1({
          propkey1: 'propkey1',
          propkey2: 'propkey2'
        })}></Button>
-     </>
+     </div>
   )
 }
 
@@ -67,11 +67,11 @@ import { useModal } from 'react-modal-hooks-better'
 
 export default (props) => {
   const [, { close }] = useModal('lazy-modal1-id')
-  
-	return (
+
+    return (
   	<Modal visible={props.visible} onCancel={close}>
-      //	content
-    </Modal>
+         {props.content}
+        </Modal>
   )
 }
 ```
