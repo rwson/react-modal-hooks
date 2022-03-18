@@ -1,12 +1,12 @@
 ### common Modal props
 
 
-If the Modal in the project has a unified specification (such as width, centering, etc.), the original writing method also needs to specify the control of the relevant props in each Modal separately. In `react-modal-hooks-better`,You can specify a `defaultProps` to `ModalProvider` to control some default props of Modal, and when you pass the same props to the open function, `defaultProps` will be overwritten
+If the Modal in the project has a unified specification (such as width, centering, etc.), the original writing method also needs to specify the control of the relevant props in each Modal separately. In `react-modal-better-hooks`,You can specify a `defaultProps` to `ModalProvider` to control some default props of Modal, and when you pass the same props to the open function, `defaultProps` will be overwritten
 
 - index.tsx
 ```jsx
 //	import Modules...
-import { ModalProvider } from 'react-modal-hooks-better'
+import { ModalProvider } from 'react-modal-better-hooks'
 
 const Root = () => {
   const defaultProps = {

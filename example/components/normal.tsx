@@ -17,7 +17,7 @@ export default () => {
       <Button
         onClick={() =>
           open({
-            content: "I'm a Modal Called By react-modal-hooks-better"
+            content: "I'm a Modal Called By react-modal-better-hooks"
           })
         }
       >

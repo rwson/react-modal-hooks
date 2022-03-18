@@ -3,12 +3,12 @@
 
 If we need to use a Modal component multiple times in the project, we need to import a Modal component multiple times, or more advanced, write a unified component to control, but it may involve responsible business logic. more difficult to maintain
 
-With `react-modal-hooks-better`, you can write your code like below
+With `react-modal-better-hooks`, you can write your code like below
 
 - App.tsx
 ```jsx
 //	import Modules...
-import { withModals } from 'react-modal-hooks-better'
+import { withModals } from 'react-modal-better-hooks'
 
 const App = () => {
   return (
@@ -28,7 +28,7 @@ export default withModals(App)({
 - modal1.tsx or modal2.tsx
 ```jsx
 //	import Modules...
-import { useModal } from 'react-modal-hooks-better'
+import { useModal } from 'react-modal-better-hooks'
 
 export default (props) => {
   const [, { close }] = useModal('modal1-id')
@@ -44,7 +44,7 @@ export default (props) => {
 - page1.tsx or page2.tsx
 ```jsx
 //	import Modules...
-import { useModal } from 'react-modal-hooks-better'
+import { useModal } from 'react-modal-better-hooks'
 
 export default () => {
   const [ Modal1, { open: openModal1 } ] = useModal('modal1-id')

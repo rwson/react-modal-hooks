@@ -34,11 +34,11 @@ const Page = () => {
 }
 ```
 
-If there are multiple Modals in a page, the above method is very cumbersome, with `react-modal-hooks-better`, you can write your code like below
+If there are multiple Modals in a page, the above method is very cumbersome, with `react-modal-better-hooks`, you can write your code like below
 
 ```jsx
 //	import Modules...
-import { useModal } from 'react-modal-hooks-better'
+import { useModal } from 'react-modal-better-hooks'
 
 const Page = () => {
   	const [ Modal1, { open: openModal1, close: closeModal1 } ] = useModal('module1-id', (props) => <ModalComponent {...props} onCancel={closeModal1} />)

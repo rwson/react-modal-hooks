@@ -1,20 +1,20 @@
-# react-modal-hooks-better
+# react-modal-better-hooks
 
 > an eaist way to open/close modals and pass props to modals, or register an dynmaic modal and you can use these modals globally
 
 
 ### Usage
 
-- Install `react-modal-hooks-better`
+- Install `react-modal-better-hooks`
 ```bash
-yarn add react-modal-hooks-better    #or npm install react-modal-hooks-better
+yarn add react-modal-better-hooks    #or npm install react-modal-better-hooks
 ```
 
 - Wrap app with `ModalProvider`
 ```jsx
 //	index.tsx
 //	import Modules...
-import { ModalProvider } from 'react-modal-hooks-better'
+import { ModalProvider } from 'react-modal-better-hooks'
 
 export default () => {
   const defaultProps = {
@@ -34,7 +34,7 @@ export default () => {
 ```jsx
 //	App.tsx
 //	import Modules...
-import { withModals } from 'react-modal-hooks-better'
+import { withModals } from 'react-modal-better-hooks'
 
 const App = () => {
   return (
@@ -52,7 +52,7 @@ export default withModals(App)({
 
 - lazy-modal1-id.tsx
 ```jsx
-import { useModal } from 'react-modal-hooks-better'
+import { useModal } from 'react-modal-better-hooks'
 
 export default (props) => {
   const [, { close }] = useModal('lazy-modal1-id')
@@ -68,7 +68,7 @@ export default (props) => {
 - Use Modals in your page/component scope
 ```jsx
 //	import Modules...
-import { useModal } from 'react-modal-hooks-better'
+import { useModal } from 'react-modal-better-hooks'
 
 export default () => {
   const [ 

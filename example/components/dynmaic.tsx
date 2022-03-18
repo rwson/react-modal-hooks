@@ -11,12 +11,12 @@ const Dynmaic = () => {
     <div>
       LazyModal
       <Button onClick={() => openLazyModal1({
-        content: "I'm lazy modal one called by react-modal-hooks-better"
+        content: "I'm lazy modal one called by react-modal-better-hooks"
       })}>
         Open Lazy Modal1
       </Button>
       <Button onClick={() => openLazyModal1({
-        content: "I'm lazy modal two called by react-modal-hooks-better"
+        content: "I'm lazy modal two called by react-modal-better-hooks"
       })}>
         Open Lazy Modal2
       </Button>
