@@ -95,7 +95,7 @@ const Page = () => {
   //	balabala
  	
 	return (
-  	<>
+  	<div>
     	//	balabala
     	<ModalComponent visible={modalOpened} itemId={itemId} {...otherProps} onCancel={() => 	setModalOpened(false)} />
     	<ModalComponent2 visible={modalOpened2} itemId={itemId2} {...otherProps} onCancel={() => 	setModalOpened2(false)} />
@@ -107,14 +107,14 @@ const Page = () => {
 				setModalOpened2(true)
         setItemId2('someid2')
       }}>Open Modal1</Button>
-    </>
+    </div>
   )
 }
 ```
 
 If there are multiple Modals in a page, the above method is very cumbersome, with `react-modal-hooks-better`, you can write your code like below
 
-```react
+```jsx
 //	import Modules...
 import { useModal } from 'react-modal-hooks-better'
 
@@ -123,7 +123,7 @@ const Page = () => {
   	const [ Modal2, { open: openModal2, close: closeModal2 } ] = useModal('module1-id', (props) => <ModalComponent {...props} onCancel={closeModal2} />)
   
   	return (
-  	<>
+  	<div>
     	//	balabala
     	<Button onClick={() => {
          openModal1({
@@ -137,7 +137,7 @@ const Page = () => {
       }}>Open Modal1</Button>
 			<Modal1 />
       <Modal2 />
-    </>
+    </div>
   )
 }
 ```
@@ -155,10 +155,10 @@ import { withModals } from 'react-modal-hooks-better'
 
 const App = () => {
   return (
-    <>
+    <div>
     	<Page1 />
     	<Page2 />
-    </>
+    </div>
   )
 }
 
@@ -191,18 +191,18 @@ export default () => {
   const [ Modal2, { open: openModal2 } ] = useModal('modal2-id')
   
   return (
-  	<>
-    	//	balabala
+  	<div>
+    	balabala
     	<Button onClick={() => openModal1({
-        //	some props
+        propKey: 'propValue'
       })}>Open Modal1</Button>
     	<Button onClick={() => openModal2({
-        //	some props
+        propKey: 'propValue'
       })}>Open Modal2</Button>
     
       <Modal1 />
       <Modal2 />
-    </>
+    </div>
   )
 }
 ```
@@ -211,7 +211,7 @@ export default () => {
 
 If the Modal in the project has a unified specification (such as width, centering, etc.), the original writing method also needs to specify the control of the relevant props in each Modal separately. In `react-modal-hooks-better`,You can specify a `defaultProps` to `ModalProvider` to control some default props of Modal, and when you pass the same props to the open function, `defaultProps` will be overwritten
 
-```react
+```jsx
 //	index.tsx
 //	import Modules...
 import { ModalProvider } from 'react-modal-hooks-better'
@@ -242,7 +242,7 @@ export default (props) => {
   
   return (
   	<Modal {...props}>
-      //	content
+      content
     </Modal>
   )
 }
