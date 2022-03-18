@@ -9,12 +9,13 @@ If the Modal in the project has a unified specification (such as width, centerin
 import { ModalProvider } from 'react-modal-hooks-better'
 
 const Root = () => {
+  const defaultProps = {
+    width: '500px',
+    centered: true
+  }
   return (
-  	<ModalProvider defaultProps={{
-        width: '500px',
-        centered: true
-      }}>
-			<AppComponnet />
+  	<ModalProvider defaultProps={defaultProps}>
+	  <AppComponnet />
     </ModalProvider>
   )
 }

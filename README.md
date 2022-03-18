@@ -24,7 +24,7 @@ export default () => {
 
   return (
   	<ModalProvider defaultProps={defaultProps}>
-			<AppComponnet />
+	  <AppComponnet />
     </ModalProvider>
   )
 }
@@ -38,10 +38,10 @@ import { withModals } from 'react-modal-hooks-better'
 
 const App = () => {
   return (
-    <>
-    	<Page1 />
-    	<Page2 />
-    </>
+    <div>
+      <Page1 />
+      <Page2 />
+    </div>
   )
 }
 
@@ -59,8 +59,8 @@ export default (props) => {
 
     return (
   	<Modal visible={props.visible} onCancel={close}>
-         {props.content}
-        </Modal>
+      {props.content}
+    </Modal>
   )
 }
 ```
@@ -96,9 +96,9 @@ export default () => {
 
 ### Problems To Resolve
 
-- [reduce the unnecessary business code](https://github.com/rwson/react-modal-hooks/blob/main/docs/business-code.mdx)
-- [easier to use the same Modal](https://github.com/rwson/react-modal-hooks/blob/main/docs/use-same-modal.mdx)
-- [common modal props](https://github.com/rwson/react-modal-hooks/blob/main/docs/common-modal-props.mdx)
+- [reduce the unnecessary business code](https://github.com/rwson/react-modal-hooks/blob/main/docs/business-code.md)
+- [easier to use the same Modal](https://github.com/rwson/react-modal-hooks/blob/main/docs/use-same-modal.md)
+- [common modal props](https://github.com/rwson/react-modal-hooks/blob/main/docs/common-modal-props.md)
 
 ### Todo
 

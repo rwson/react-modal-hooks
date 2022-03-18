@@ -13,8 +13,8 @@ import { withModals } from 'react-modal-hooks-better'
 const App = () => {
   return (
     <div>
-    	<Page1 />
-    	<Page2 />
+      <Page1 />
+      <Page2 />
     </div>
   )
 }
@@ -35,7 +35,7 @@ export default (props) => {
   
 	return (
   	<Modal visible={props.visible} onCancel={close}>
-      //	content
+      content
     </Modal>
   )
 }
@@ -52,14 +52,9 @@ export default () => {
   
   return (
   	<div>
-    	balabala
-    	<Button onClick={() => openModal1({
-        propKey: 'propValue'
-      })}>Open Modal1</Button>
-    	<Button onClick={() => openModal2({
-        propKey: 'propValue'
-      })}>Open Modal2</Button>
-    
+      balabala
+      <Button onClick={() => openModal1({propKey: 'propValue'})}>Open Modal1</Button>
+      <Button onClick={() => openModal2({propKey: 'propValue'})}>Open Modal2</Button>
       <Modal1 />
       <Modal2 />
     </div>

@@ -46,14 +46,9 @@ const Page = () => {
   
   	return (
   	<div>
-    	//	balabala
-    	<Button onClick={() => openModal1({
-				id: 'someid'
-			})}>Open Modal1</Button>
-    	<Button onClick={() => openModal2({
-				id: 'someid2'
-			})}>Open Modal2</Button>
-			<Modal1 />
+      <Button onClick={() => openModal1({id: ‘someid' })}>Open Modal1</Button>
+      <Button onClick={() => openModal2({id: 'someid2'})}>Open Modal2</Button>
+      <Modal1 />
       <Modal2 />
     </div>
   )
