@@ -9,7 +9,7 @@
 yarn add react-modal-hooks-better    #or npm install react-modal-hooks-better
 ```
 
-```jsx
+```react
 //	index.tsx
 //	import Modules...
 import { ModalProvider } from 'react-modal-hooks-better'
@@ -114,7 +114,7 @@ const Page = () => {
 
 If there are multiple Modals in a page, the above method is very cumbersome, with `react-modal-hooks-better`, you can write your code like below
 
-```jsx
+```react
 //	import Modules...
 import { useModal } from 'react-modal-hooks-better'
 
@@ -148,7 +148,7 @@ If we need to use a Modal component multiple times in the project, we need to im
 
 With `react-modal-hooks-better`, you can write your code like below
 
-```jsx
+```react
 //	App.tsx
 //	import Modules...
 import { withModals } from 'react-modal-hooks-better'
@@ -211,7 +211,7 @@ export default () => {
 
 If the Modal in the project has a unified specification (such as width, centering, etc.), the original writing method also needs to specify the control of the relevant props in each Modal separately. In `react-modal-hooks-better`,You can specify a `defaultProps` to `ModalProvider` to control some default props of Modal, and when you pass the same props to the open function, `defaultProps` will be overwritten
 
-```tsx
+```react
 //	index.tsx
 //	import Modules...
 import { ModalProvider } from 'react-modal-hooks-better'
@@ -252,6 +252,6 @@ export default (props) => {
 
 ### TODO
 
-- Need to avoid open/close nested Modal outModal will rerender
+- Need to avoid open/close mutil Modals other Modals will rerender
 - Perfecting TypeScript types
 - `withModals`HOC Support Specifies whether to lazy load
