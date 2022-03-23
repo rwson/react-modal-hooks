@@ -21,9 +21,11 @@ export default () => {
   }
 
   return (
-  	<ModalProvider defaultProps={defaultProps}>
-	  	<AppComponnet />
-    </ModalProvider>
+    <div>      
+      <ModalProvider defaultProps={defaultProps}>
+        <AppComponnet />
+      </ModalProvider>
+    </div>
   )
 }
 ```
@@ -54,9 +56,11 @@ export default (props) => {
   const [, { close }] = useModal('lazy-modal1-id')
 
   return (
-  	<Modal visible={props.visible} onCancel={close}>
-      {props.content}
-    </Modal>
+    <div>
+      <Modal visible={props.visible} onCancel={close}>
+        {props.content}
+      </Modal>
+    </div>
   )
 }
 ```
