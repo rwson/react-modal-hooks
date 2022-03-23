@@ -4,7 +4,7 @@
 When we use `React` as a framework to develop a project, when we need to open a Modal, we need to maintain a lot of unnecessary states (such as controlling the display and hiding of the Modal, the closing event of the modal box, if addtionan props are required in the Modal and additional maintenance is required), just like below
 
 
-```jsx
+```react
 //	import Modules...
 const Page = () => {
   const [ modalOpened, setModalOpened ]  = useState(false)
@@ -36,7 +36,7 @@ const Page = () => {
 
 If there are multiple Modals in a page, the above method is very cumbersome, with `react-modal-better-hooks`, you can write your code like below
 
-```jsx
+```react
 //	import Modules...
 import { useModal } from 'react-modal-better-hooks'
 

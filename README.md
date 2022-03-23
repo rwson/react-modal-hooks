@@ -5,13 +5,13 @@
 
 ### Usage
 
-- Install `react-modal-better-hooks`
+- Install `react-modal-better-hooks`via`yarn`or`npm`
 ```bash
 yarn add react-modal-better-hooks    #or npm install react-modal-better-hooks
 ```
 
-- Wrap app with `ModalProvider`
-```jsx
+- Wrap app entry with `ModalProvider`
+```react
 //	index.tsx
 //	import Modules...
 import { ModalProvider } from 'react-modal-better-hooks'
@@ -24,14 +24,14 @@ export default () => {
 
   return (
   	<ModalProvider defaultProps={defaultProps}>
-	  <AppComponnet />
+	  	<AppComponnet />
     </ModalProvider>
   )
 }
 ```
 
-- (Optional)If you need use some Modals globally, use `withModals` HOC to wrap your Entry Component
-```jsx
+- If you need use some Modals globally, use `withModals` HOC to wrap your Entry Component
+```react
 //	App.tsx
 //	import Modules...
 import { withModals } from 'react-modal-better-hooks'
@@ -51,13 +51,13 @@ export default withModals(App)({
 ```
 
 - lazy-modal1-id.tsx
-```jsx
+```react
 import { useModal } from 'react-modal-better-hooks'
 
 export default (props) => {
   const [, { close }] = useModal('lazy-modal1-id')
 
-    return (
+  return (
   	<Modal visible={props.visible} onCancel={close}>
       {props.content}
     </Modal>
@@ -66,7 +66,7 @@ export default (props) => {
 ```
 
 - Use Modals in your page/component scope
-```jsx
+```react
 //	import Modules...
 import { useModal } from 'react-modal-better-hooks'
 
