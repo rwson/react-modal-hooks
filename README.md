@@ -11,9 +11,7 @@ yarn add react-modal-better-hooks    #or npm install react-modal-better-hooks
 ```
 
 - Wrap app entry with `ModalProvider`
-```react
-//	index.tsx
-//	import Modules...
+```jsx
 import { ModalProvider } from 'react-modal-better-hooks'
 
 export default () => {
@@ -31,9 +29,7 @@ export default () => {
 ```
 
 - If you need use some Modals globally, use `withModals` HOC to wrap your Entry Component
-```react
-//	App.tsx
-//	import Modules...
+```jsx
 import { withModals } from 'react-modal-better-hooks'
 
 const App = () => {
@@ -51,7 +47,7 @@ export default withModals(App)({
 ```
 
 - lazy-modal1-id.tsx
-```react
+```jsx
 import { useModal } from 'react-modal-better-hooks'
 
 export default (props) => {
@@ -66,8 +62,7 @@ export default (props) => {
 ```
 
 - Use Modals in your page/component scope
-```react
-//	import Modules...
+```jsx
 import { useModal } from 'react-modal-better-hooks'
 
 export default () => {
