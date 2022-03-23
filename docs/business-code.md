@@ -20,7 +20,6 @@ const Page = () => {
     setModalOpened2(true)
     setItemId2('someid')
   }, [])
- 	
 	return (
   	<div>
     	<Modal visible={modalOpened} itemId={itemId} onCancel={() => setModalOpened(false)} />
@@ -42,7 +41,7 @@ const Page = () => {
   	const [ Modal1, { open: openModal1, close: closeModal1 } ] = useModal('module1-id', (props) => <ModalComponent modalId={props.id} onCancel={closeModal1} />)
   	const [ Modal2, { open: openModal2, close: closeModal2 } ] = useModal('module1-id', (props) => <ModalComponent modalId={props.id} onCancel={closeModal2} />)
   
-  	return (
+  return (
   	<div>
       <Button onClick={() => openModal1({id: ‘someid' })}>Open Modal1</Button>
       <Button onClick={() => openModal2({id: 'someid2'})}>Open Modal2</Button>
