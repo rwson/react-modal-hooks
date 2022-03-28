@@ -53,7 +53,7 @@ export const reducer = (state: ModalState, action: Actions): ModalState => {
     case ModalActionType.CloseModal:
     return {
       ...state,
-      modals: state.modals.filter(({ id }) => id !== payloadId)
+      modals: state.modals.filter(({ id, isLazy }) => id !== payloadId && isLazy)
     }
 
     case ModalActionType.CloseAllModals:
