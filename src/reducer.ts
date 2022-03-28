@@ -50,14 +50,20 @@ export const reducer = (state: ModalState, action: Actions): ModalState => {
       }) : modal)
     }
 
+    case ModalActionType.CloseModal:
+    return {
+      ...state,
+      modals: state.modals.filter(({ id }) => id !== payloadId)
+    }
+
     case ModalActionType.CloseAllModals:
-      return {
-        ...state,
-        modals: state.modals.map((modal) => ({
-          ...modal,
-          opened: false
-        }))
-      }
+    return {
+      ...state,
+      modals: state.modals.map((modal) => ({
+        ...modal,
+        opened: false
+      }))
+    }
 
     case ModalActionType.AddLazyModal:
       modals = cloneDeep<ModalItem[]>(state.modals)
@@ -90,6 +96,9 @@ export const reducer = (state: ModalState, action: Actions): ModalState => {
           component: action.payload.component
         }) : modal)
       }
+
+    default:
+      return state
   }
 }
 
@@ -122,8 +131,9 @@ export type ActionsMap = {
   [ModalActionType.OpenModal]: OpenModalParams
   [ModalActionType.AddLazyModal]: AddLazyModalParams
   [ModalActionType.LazyModalLoaded]: AddLazyModalParams
-  [ModalActionType.CloseAllModals]: any
   [ModalActionType.CloseModal]: CloseModalParams
+  [ModalActionType.RemoveModal]: CloseModalParams
+  [ModalActionType.CloseAllModals]: any
 }
 
 export type Actions = {

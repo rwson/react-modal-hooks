@@ -53,7 +53,9 @@ export default withModals(App)({
 import { useModal } from 'react-modal-better-hooks'
 
 export default (props) => {
-  const [, { close }] = useModal('lazy-modal1-id')
+  const [, { close }] = useModal({
+    id: 'lazy-modal1-id'
+  })
 
   return (
     <div>
@@ -73,11 +75,16 @@ export default () => {
   const [ 
     LazyModal1Component, 
     { open: openLazyModal1 } 
-    ] = useModal('lazy-modal1-id')
+    ] = useModal({
+      id: 'lazy-modal1-id'
+    })
   const [ 
     Modal1Component, 
     { open: openModal1, close, closeAll } 
-    ] = useModal('modal1-id', (props) => <Modal1 {...props} onCancel={close} closeAll={closeAll} />)
+    ] = useModal({
+      id: 'modal1-id', 
+      render: (props) => <Modal1 {...props} onCancel={close} closeAll={closeAll} />
+    })
   
   return (
      <div>
@@ -103,5 +110,6 @@ export default () => {
 
 - Need to avoid open/close mutil Modals other Modals will rerender
 - Perfecting TypeScript types
+- Support Lazy Modals KeepAlive
 - `withModals`HOC Support Specifies whether to lazy load
 

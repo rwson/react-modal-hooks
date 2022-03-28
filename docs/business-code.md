@@ -37,8 +37,14 @@ If there are multiple Modals in a page, the above method is very cumbersome, wit
 import { useModal } from 'react-modal-better-hooks'
 
 const Page = () => {
-  	const [ Modal1, { open: openModal1, close: closeModal1 } ] = useModal('module1-id', (props) => (<Modal modalId={props.id} onCancel={closeModal1} />))
-  	const [ Modal2, { open: openModal2, close: closeModal2 } ] = useModal('module1-id', (props) => (<Modal2 modalId={props.id} onCancel={closeModal2} />))
+  	const [ Modal1, { open: openModal1, close: closeModal1 } ] = useModal({
+      id: 'module1-id', 
+      render: (props) => (<Modal modalId={props.id} onCancel={closeModal1} />)
+    })
+  	const [ Modal2, { open: openModal2, close: closeModal2 } ] = useModal({
+      id: 'module1-id', 
+      render: (props) => (<Modal2 modalId={props.id} onCancel={closeModal2} />)
+    })
   
   return (
   	<div>

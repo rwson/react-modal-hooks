@@ -6,6 +6,12 @@ import { useModalContext } from './context'
 import { ModalActionType } from './constants'
 import { ModalItem } from './reducer'
 
+type UseModalParams<T> = {
+  id: string
+  keepAlive: boolean
+  render?: (props: ModalRenderProps<T>) => JSX.Element
+}
+
 const WrapperConponent = ({ render, modalProps }) => {
   return (
     <>
@@ -14,7 +20,7 @@ const WrapperConponent = ({ render, modalProps }) => {
   )
 }
 
-export function useModal<T = any>(id: string, render?: (props: ModalRenderProps<T>) => JSX.Element) {
+export function useModal<T = any>({ id, render, keepAlive = true }: UseModalParams<T>) {
   const { dispatch, state, defaultProps } = useModalContext()
 
   let opened: boolean = false
@@ -35,6 +41,16 @@ export function useModal<T = any>(id: string, render?: (props: ModalRenderProps<
       render = modal.component
     }
   }
+
+  useEffect(() => {
+    return () => {
+      if (!keepAlive) {
+        dispatch?.(ModalActionType.RemoveModal, {
+          id
+        })
+      }
+    }
+  }, [keepAlive, id, dispatch])
 
   const open = (props) => dispatch?.(ModalActionType.OpenModal, {
     id,
