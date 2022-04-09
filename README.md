@@ -57,6 +57,9 @@ export default (props) => {
     id: 'lazy-modal1-id'
   })
 
+  //  Or
+  const [, { close }] = useModal('lazy-modal1-id')
+
   return (
     <div>
       <Modal visible={props.visible} onCancel={close}>

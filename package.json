@@ -1,14 +1,14 @@
 {
-  "version": "1.2.1",
+  "version": "1.3.0",
   "license": "GNU",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "repository": {
-    "url": "https://github.com/rwson/react-modal-better-hooks",
+    "url": "https://github.com/rwson/react-modal-hooks",
     "type": "git"
   },
-  "bugs": "https://github.com/rwson/react-modal-better-hooks/issues",
-  "homepage": "https://github.com/rwson/react-modal-better-hooks#readme",
+  "bugs": "https://github.com/rwson/react-modal-hooks/issues",
+  "homepage": "https://github.com/rwson/react-modal-hooks#readme",
   "files": [
     "dist",
     "src"

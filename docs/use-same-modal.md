@@ -34,10 +34,10 @@ export default (props) => {
   const [, { close }] = useModal('modal1-id')
   
 	return (
-  	<Modal visible={props.visible} onCancel={close}>
-      content
-    </Modal>
-  )
+  	  <Modal visible={props.visible} onCancel={close}>
+        content
+      </Modal>
+    )
 }
 ```
 
@@ -50,17 +50,15 @@ export default () => {
   const [ Modal1, { open: openModal1 } ] = useModal({
     id: 'modal1-id'
   })
-  const [ Modal2, { open: openModal2 } ] = useModal({
-    id: 'modal2-id'
-  })
+  const [ Modal2, { open: openModal2 } ] = useModal('modal2-id')
   
   return (
   	<div>
       balabala
       <Button onClick={() => openModal1({propKey: 'propValue'})}>Open Modal1</Button>
       <Button onClick={() => openModal2({propKey: 'propValue'})}>Open Modal2</Button>
-      <Modal1 />
-      <Modal2 />
+      {Modal1}
+      {Modal2}
     </div>
   )
 }

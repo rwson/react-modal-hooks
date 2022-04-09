@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from '../../src'
+import { useModal } from '../..'
 
 export default () => {
   const [NomalModal, { open, close }] = useModal<{ content: string }>('normal-modal', (props) => {

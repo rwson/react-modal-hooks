@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, ReactElement, cloneElement } from 'react'
 
 import merge from 'lodash/merge'
 
@@ -8,11 +8,20 @@ import { ModalItem } from './reducer'
 
 type UseModalParams<T> = {
   id: string
-  keepAlive: boolean
-  render?: (props: ModalRenderProps<T>) => JSX.Element
+  keepAlive?: boolean
+  render?: (props: ModalRenderProps<T>) => any
 }
 
-const WrapperConponent = ({ render, modalProps }) => {
+export declare type ModalBasicProps<T> = {
+  visible: boolean,
+  [key: string]: any
+}
+
+const WrappedModalComponent = ({ render, modalProps, opened }) => {
+  if (!opened) {
+    return null
+  }
+
   return (
     <>
       {render(modalProps)}
@@ -20,11 +29,30 @@ const WrapperConponent = ({ render, modalProps }) => {
   )
 }
 
-export function useModal<T = any>({ id, render, keepAlive = true }: UseModalParams<T>) {
+export function useModal<T = any>(params : UseModalParams<T> | string): [ ReactElement, {
+  opened: boolean,
+  open: (props?: T) => void,
+  close: () => void,
+  closeAll: () => void
+} ] {
   const { dispatch, state, defaultProps } = useModalContext()
 
   let opened: boolean = false
   let props: any = {}
+
+  let id, render, keepAlive
+
+  if (typeof params === 'string') {
+    id = params
+  } else {
+    id = params.id
+    keepAlive = params.keepAlive
+    render = params.render
+  }
+
+  if (typeof keepAlive === 'undefined') {
+    keepAlive = true
+  }
 
   let modal = state.modals.find((modal) => modal.id === id)
 
@@ -62,7 +90,7 @@ export function useModal<T = any>({ id, render, keepAlive = true }: UseModalPara
   const closeAll = () => dispatch?.(ModalActionType.CloseAllModals)
 
   return [
-    () => opened ? <WrapperConponent render={render} modalProps={props} /> : null,
+    <WrappedModalComponent render={render} modalProps={props} opened={opened} />,
     {
       opened,
       open,

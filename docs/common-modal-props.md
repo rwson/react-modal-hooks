@@ -14,9 +14,9 @@ const Root = () => {
     centered: true
   }
   return (
-  	<ModalProvider defaultProps={defaultProps}>
+  	  <ModalProvider defaultProps={defaultProps}>
 		  <AppComponnet />
-    </ModalProvider>
+      </ModalProvider>
   )
 }
 ```

@@ -7,7 +7,7 @@ import Normal from './components/normal'
 import Nested from './components/nested'
 import Dynmaic from './components/dynmaic'
 
-import { ModalProvider } from '../src'
+import { ModalProvider } from '..'
 
 import 'antd/dist/antd.css'
 

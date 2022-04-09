@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from '../../src'
+import { useModal } from '../..'
 
 export default () => {
   const [ChildModal, { open: openNested, close: closeNested, closeAll }] = useModal('child-modal', (props) => {
