@@ -79,7 +79,6 @@ export const reducer = (state: ModalState, action: Actions): ModalState => {
           isLazy: true,
           loadFailed: false,
           loader: action.payload.loader,
-          animation: action.payload.animation,
         } as ModalItem);
       }
 
@@ -126,7 +125,6 @@ export interface AddLazyModalParams {
   isLazy?: boolean;
   loaded?: boolean;
   loadFailed?: boolean;
-  animation?: boolean;
   loader?: Importer;
   component?: ComponentType | any;
   props?: {

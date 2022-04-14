@@ -1,4 +1,4 @@
-import { memo, FC, ReactElement, } from 'react';
+import React, { memo, FC, ReactElement, } from 'react';
 
 type WrappedModalComponentProps = {
   renderIfClosed?: boolean
