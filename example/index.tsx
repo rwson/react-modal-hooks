@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 import { Route, Routes, Link, BrowserRouter } from 'react-router-dom'
@@ -7,7 +7,7 @@ import Normal from './components/normal'
 import Nested from './components/nested'
 import Dynmaic from './components/dynmaic'
 
-import { ModalProvider } from '..'
+import { ModalProvider } from './src'
 
 import 'antd/dist/antd.css'
 
@@ -30,7 +30,7 @@ const AppRoute = () => {
   )
 }
 
-const App = () => {
+const App2 = () => {
   return (
     <ModalProvider defaultProps={{
       width: '500px',
@@ -44,4 +44,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App2 />, document.getElementById('root'));

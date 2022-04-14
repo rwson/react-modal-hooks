@@ -1,3 +1,3 @@
-export { ModalProvider } from './context'
-export { useModal, ModalBasicProps } from './hooks'
-export { withModals } from './register'
+export { ModalProvider } from './context';
+export { useModal } from './hooks';
+export { withModals } from './register';

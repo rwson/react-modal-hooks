@@ -1,105 +1,114 @@
-import React, { useMemo, useEffect, ReactElement, cloneElement } from 'react'
-
-import merge from 'lodash/merge'
-
-import { useModalContext } from './context'
-import { ModalActionType } from './constants'
-import { ModalItem } from './reducer'
+import React, { useMemo, useEffect, ReactElement, cloneElement } from 'react';
+import { ModalActionType } from './constants';
+import { useModalContext } from './context';
+import { ModalItem } from './reducer';
+import merge from 'lodash/merge';
+import WrappedModalComponent from './wrapped';
 
 type UseModalParams<T> = {
-  id: string
-  keepAlive?: boolean
-  render?: (props: ModalRenderProps<T>) => any
-}
+  id: string;
+  keepAlive?: boolean;
+  renderIfClosed?: boolean;
+  render?: (props: ModalRenderProps<T>) => any;
+};
 
-export declare type ModalBasicProps<T> = {
-  visible: boolean,
-  [key: string]: any
-}
+export type ModalBasicProps<T> = {
+  visible: boolean;
+  [key: string]: any;
+};
 
-const WrappedModalComponent = ({ render, modalProps, opened }) => {
-  if (!opened) {
-    return null
+export function useModal<T = any>(
+  params: UseModalParams<T> | string
+): [
+  ReactElement,
+  {
+    opened: boolean;
+    open: (props?: T) => void;
+    close: () => void;
+    closeAll: () => void;
   }
+] {
+  const { dispatch, state, defaultProps } = useModalContext();
 
-  return (
-    <>
-      {render(modalProps)}
-    </>
-  )
-}
+  let opened: boolean = false;
+  let props: any = {};
 
-export function useModal<T = any>(params : UseModalParams<T> | string): [ ReactElement, {
-  opened: boolean,
-  open: (props?: T) => void,
-  close: () => void,
-  closeAll: () => void
-} ] {
-  const { dispatch, state, defaultProps } = useModalContext()
-
-  let opened: boolean = false
-  let props: any = {}
-
-  let id, render, keepAlive
+  let id, render, renderIfClosed, keepAlive;
 
   if (typeof params === 'string') {
-    id = params
+    id = params;
   } else {
-    id = params.id
-    keepAlive = params.keepAlive
-    render = params.render
+    id = params.id;
+    keepAlive = params.keepAlive;
+    renderIfClosed = params.renderIfClosed;
+    render = params.render;
   }
 
   if (typeof keepAlive === 'undefined') {
-    keepAlive = true
+    keepAlive = true;
   }
 
-  let modal = state.modals.find((modal) => modal.id === id)
+  if (renderIfClosed && !keepAlive) {
+    throw new Error(`RHMB: 'keepAlive' should must be true when 'renderIfClosed' is true, not ${keepAlive}, Please check your code`)
+  }
+
+  let modal = state.modals.find((modal) => modal.id === id);
 
   useEffect(() => {
-    modal = state.modals.find((modal) => modal.id === id)
-  }, [state.modals])
+    modal = state.modals.find((modal) => modal.id === id);
+  }, [state.modals]);
 
   if (modal) {
-    props = (modal as any).props ?? {}
-    props.visible = modal.opened
-    opened = modal.opened
+    props = (modal as any).props ?? {};
+    props.visible = modal.opened;
+    opened = modal.opened;
 
     if (modal.isLazy) {
-      render = modal.component
+      keepAlive = true;
+      if (modal.loaded) {
+        render = modal.component;
+      } else {
+        render = () => null;
+      }
     }
   }
 
   useEffect(() => {
     return () => {
       if (!keepAlive) {
-        dispatch?.(ModalActionType.RemoveModal, {
-          id
-        })
+        dispatch(ModalActionType.RemoveModal, {
+          id,
+        });
       }
-    }
-  }, [keepAlive, id, dispatch])
+    };
+  }, [keepAlive, id, dispatch]);
 
-  const open = (props) => dispatch?.(ModalActionType.OpenModal, {
-    id,
-    props: merge(props, defaultProps)
-  })
+  const open = (props) =>
+    dispatch(ModalActionType.OpenModal, {
+      id,
+      props: merge(props, defaultProps),
+    });
 
-  const close = () => dispatch?.(ModalActionType.CloseModal, { id })
+  const close = () => dispatch(ModalActionType.CloseModal, { id });
 
-  const closeAll = () => dispatch?.(ModalActionType.CloseAllModals)
+  const closeAll = () => dispatch(ModalActionType.CloseAllModals);
 
   return [
-    <WrappedModalComponent render={render} modalProps={props} opened={opened} />,
+    <WrappedModalComponent
+      render={render}
+      modalProps={props}
+      opened={opened}
+      renderIfClosed={renderIfClosed}
+    />,
     {
       opened,
       open,
       close,
-      closeAll
-    }
-  ]
+      closeAll,
+    },
+  ];
 }
 
 type ModalRenderProps<T> = {
-  [P in keyof T]?: T[P]
-} & ModalItem
+  [P in keyof T]?: T[P];
+} & ModalItem;

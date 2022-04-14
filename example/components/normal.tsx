@@ -1,15 +1,20 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from '../..'
+import { useModal } from '../../src'
 
 export default () => {
-  const [NomalModal, { open, close }] = useModal<{ content: string }>('normal-modal', (props) => {
-    return (
-      <Modal {...props} onCancel={close}>
-        {props.content}
-      </Modal>
-    )
+  const [NomalModal, { open, close }] = useModal<{ content: string }>({
+    id: 'normal-modal',
+    renderIfClosed: true,
+    keepAlive: false,
+    render: (props) => {
+      return (
+        <Modal {...props} onCancel={close}>
+          {props.content}
+        </Modal>
+      )
+    }
   })
 
   return (
@@ -23,7 +28,7 @@ export default () => {
       >
         Open Normal Modal
       </Button>
-      <NomalModal />
+      {NomalModal}
     </div>
   );
 };

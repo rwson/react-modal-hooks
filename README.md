@@ -54,7 +54,8 @@ import { useModal } from 'react-modal-better-hooks'
 
 export default (props) => {
   const [, { close }] = useModal({
-    id: 'lazy-modal1-id'
+    id: 'lazy-modal1-id',
+    renderIfClosed: true
   })
 
   //  Or
@@ -103,6 +104,28 @@ export default () => {
 ```
 
 
+### API
+
+- `useModal` parameters
+
+  - `Object` type
+  | name             | description                                                  | defaultValue | required |
+  | ---------------- | ------------------------------------------------------------ | ------------ | -------- |
+  | `id`             | `id` specified when registering `Modal`                      | `N/A`        | Y        |
+  | `render`         | `render method` of `Modal`                                   | `undefined`  | N        |
+  | `renderIfClosed` | When the `Modal` is not opened, the `Modal` will also be mount | `false`      | N        |
+  | `keepAlive`      | If the current `Modal` is a `LazyModal`, `keepAlive` is always `true`, this is to avoid reloading the corresponding component, if not `LazyModal`, in the case of `renderIfClosed` specifying `true`, `keepAlive` must also be `true` | `true`       | N        |
+
+  - `String` as `ModalId`
+
+- `withModal` parameters
+ ```typescript
+  withModal(SomeRenderWillUseModals)({
+    'modalId1': () => import('./path/to/modal1'),
+    'modalId2': () => import('./path/to/modal2')
+  })
+ ```
+
 ### Problems To Resolve
 
 - [reduce the unnecessary business code](https://github.com/rwson/react-modal-hooks/blob/main/docs/business-code.md)
@@ -114,5 +137,5 @@ export default () => {
 - Need to avoid open/close mutil Modals other Modals will rerender
 - Perfecting TypeScript types
 - Support Lazy Modals KeepAlive
-- `withModals`HOC Support Specifies whether to lazy load
+- `withModals` HOC Support Specifies whether to lazy load
 

@@ -1,8 +1,8 @@
 export enum ModalActionType {
-  OpenModal,
-  CloseModal,
-  CloseAllModals,
-  RemoveModal,
-  AddLazyModal,
-  LazyModalLoaded
+  OpenModal = 'OpenModal',
+  CloseModal = 'CloseModal',
+  CloseAllModals = 'CloseAllModals',
+  RemoveModal = 'RemoveModal',
+  AddLazyModal = 'AddLazyModal',
+  LazyModalLoaded = 'LazyModalLoaded',
 }

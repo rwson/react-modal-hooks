@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { withModals, useModal } from '../..'
+import { withModals, useModal } from '../../src'
 
 const Dynmaic = () => {
   const [ LazyModal1, { open: openLazyModal1 } ] = useModal('modal-1')
@@ -20,8 +20,8 @@ const Dynmaic = () => {
       })}>
         Open Lazy Modal2
       </Button>
-      <LazyModal1 />
-      <LazyModal2 />
+      {LazyModal1}
+      {LazyModal2}
     </div>
   );
 };

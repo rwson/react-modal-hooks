@@ -1,16 +1,19 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from '../..'
+import { useModal } from '../../src'
 
 export default () => {
-  const [ChildModal, { open: openNested, close: closeNested, closeAll }] = useModal('child-modal', (props) => {
-    return (
-      <Modal {...props} onCancel={closeNested} width="400px">
-        <p>I'm Nested Modal</p>
-        <Button onClick={closeAll}>Close All Modals</Button>
-      </Modal>
-    )
+  const [ChildModal, { open: openNested, close: closeNested, closeAll }] = useModal({
+    id: 'child-modal', 
+    render: (props) => {
+      return (
+        <Modal {...props} onCancel={closeNested} width="400px">
+          <p>I'm Nested Modal</p>
+          <Button onClick={closeAll}>Close All Modals</Button>
+        </Modal>
+      )
+    }
   })
 
   const [OutModal, { open, close }] = useModal('out-modal', (props) => {
@@ -37,8 +40,8 @@ export default () => {
       >
         Open Out Modal
       </Button>
-      <OutModal />
-      <ChildModal />
+      {OutModal}
+      {ChildModal}
     </div>
   );
 };

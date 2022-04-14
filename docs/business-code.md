@@ -21,7 +21,7 @@ const Page = () => {
     setItemId2('someid')
   }, [])
 	return (
-  	<div>
+  	  <div>
     	<Modal visible={modalOpened} itemId={itemId} onCancel={() => setModalOpened(false)} />
     	<Modal2 visible={modalOpened2} itemId={itemId2} onCancel={() => setModalOpened2(false)} />
     	<Button onClick={openModal1}>Open Modal1</Button>
