@@ -109,6 +109,7 @@ export default () => {
 - `useModal` parameters
 
   - `Object` type
+  
   | name             | description                                                  | defaultValue | required |
   | ---------------- | ------------------------------------------------------------ | ------------ | -------- |
   | `id`             | `id` specified when registering `Modal`                      | `N/A`        | Y        |
