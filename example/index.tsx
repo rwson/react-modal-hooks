@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom'
 
 import { Route, Routes, Link, BrowserRouter } from 'react-router-dom'
 
+import { ModalProvider } from 'react-modal-better-hooks'
+
 import Normal from './components/normal'
 import Nested from './components/nested'
 import Dynmaic from './components/dynmaic'
-
-import { ModalProvider } from './src'
 
 import 'antd/dist/antd.css'
 

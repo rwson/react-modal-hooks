@@ -44,6 +44,8 @@ export function useModal<T = any>(
     render = params.render;
   }
 
+  console.log(params)
+
   if (typeof keepAlive === 'undefined') {
     keepAlive = true;
   }
@@ -89,7 +91,9 @@ export function useModal<T = any>(
       props: merge(props, defaultProps),
     });
 
-  const close = () => dispatch(ModalActionType.CloseModal, { id });
+  const close = () => {
+    dispatch(ModalActionType.CloseModal, { id })
+  };
 
   const closeAll = () => dispatch(ModalActionType.CloseAllModals);
 

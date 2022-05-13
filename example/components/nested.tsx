@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from '../../src'
+import { useModal } from 'react-modal-better-hooks'
 
 export default () => {
   const [ChildModal, { open: openNested, close: closeNested, closeAll }] = useModal({
@@ -16,19 +16,22 @@ export default () => {
     }
   })
 
-  const [OutModal, { open, close }] = useModal('out-modal', (props) => {
-    return (
-      <Modal {...props} onCancel={close}>
-        <p>I'm Out Modal</p>
-        <Button
-          onClick={() =>
-            openNested()
-          }
-        >
-          Open Nested Modal
-        </Button>
-      </Modal>
-    )
+  const [OutModal, { open, close }] = useModal({
+    id: 'out-modal', 
+    render: (props) => {
+      return (
+        <Modal {...props} onCancel={close}>
+          <p>I'm Out Modal</p>
+          <Button
+            onClick={() =>
+              openNested()
+            }
+          >
+            Open Nested Modal
+          </Button>
+        </Modal>
+      )
+    }
   })
 
   return (

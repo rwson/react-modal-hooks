@@ -1,13 +1,13 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from '../../src'
+import { useModal } from 'react-modal-better-hooks'
 
 export default () => {
   const [NomalModal, { open, close }] = useModal<{ content: string }>({
     id: 'normal-modal',
     renderIfClosed: true,
-    keepAlive: false,
+    keepAlive: true,
     render: (props) => {
       return (
         <Modal {...props} onCancel={close}>
