@@ -135,8 +135,6 @@ export default () => {
 
 ### Todo
 
-- Need to avoid open/close mutil Modals other Modals will rerender
 - Perfecting TypeScript types
-- Support Lazy Modals KeepAlive
 - `withModals` HOC Support Specifies whether to lazy load
 

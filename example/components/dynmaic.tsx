@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { withModals, useModal } from 'react-modal-better-hooks'
+import { withModals, useModal } from '../react-modal-better-hooks/react-modal-better-hooks.esm.js'
 
 const Dynmaic = () => {
   const [ LazyModal1, { open: openLazyModal1, close: closeLazyModal1 } ] = useModal('modal-1')

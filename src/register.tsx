@@ -28,7 +28,7 @@ export function withModals<T = any>(
 
     const loadModal = useCallback(
       async (id: string) => {
-        const modal = state.modals.find((modal) => modal.id === id);
+        const modal = state.get(id);
         if (modal) {
           try {
             //  When unload modal and module load failed, try reload module
@@ -57,13 +57,10 @@ export function withModals<T = any>(
       const keys: string[] = Object.keys(modals);
 
       for (const key of keys) {
-        dispatch(
-          ModalActionType.AddLazyModal,
-          {
-            id: key,
-            loader: moduleLoader(modals[key]),
-          }
-        );
+        dispatch(ModalActionType.AddLazyModal, {
+          id: key,
+          loader: moduleLoader(modals[key]),
+        });
       }
     }, [modals]);
 
@@ -72,11 +69,12 @@ export function withModals<T = any>(
     }, [modals]);
 
     useEffect(() => {
-      const keys: string[] = Object.keys(modals);
+      const keys: Array<string> = Array.from(state.keys());
+
       for (const key of keys) {
         loadModal(key);
       }
-    }, [state.modals.length]);
+    }, [state]);
 
     return <Component {...props} />;
   };

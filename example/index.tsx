@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import { Route, Routes, Link, BrowserRouter } from 'react-router-dom'
 
-import { ModalProvider } from 'react-modal-better-hooks'
+import { ModalProvider } from './react-modal-better-hooks/react-modal-better-hooks.esm.js'
 
 import Normal from './components/normal'
 import Nested from './components/nested'

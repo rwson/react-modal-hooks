@@ -1,113 +1,78 @@
 import { ModalActionType } from './constants';
 import { Importer } from './register';
+import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
-import isEqual from 'lodash/isEqual';
 import { ComponentType } from 'react';
+import { isEqual } from 'lodash';
 
-export const initialState: ModalState = {
-  modals: [],
-};
+export const initialState = new Map();
 
-export const reducer = (state: ModalState, action: Actions): ModalState => {
-  const { id: payloadId, props: payloadProps } = action.payload;
-  let modals, lastIndex;
+export const reducer = produce(
+  (state: ModalStateMap, action: Actions): ModalStateMap => {
+    const { id: payloadId, props: payloadProps, loader, component, loadFailed, loaded } = action.payload ?? {};
+    const allKeys: Array<string> = Array.from(state.keys());
+    const registed: boolean = state.has(payloadId);
 
-  switch (action.type) {
-    case ModalActionType.OpenModal:
-      modals = cloneDeep<ModalItem[]>(state.modals);
-      lastIndex = modals.findIndex(({ id }) => id === payloadId);
-      if (lastIndex === -1) {
-        modals.push({
-          ...action.payload,
-          opened: true,
-        } as ModalItem);
-      } else {
-        modals = modals.map((modal) => {
-          if (modal.id === payloadId) {
-            if (!isEqual(modal.props, action.payload.props)) {
-              modal.props = action.payload.props;
-            }
-            modal.opened = true;
+    let currentModal: ModalItem | undefined = state.get(payloadId);
+
+    switch (action.type) {
+      case ModalActionType.OpenModal:
+        if (registed) {
+          if (currentModal) {
+            currentModal.opened = true;
+            currentModal.props = payloadProps;
           }
-          return modal;
+        } else {
+          currentModal = Object.assign({}, action.payload, {
+            opened: true,
+          });
+        }
+
+        state.set(payloadId, currentModal as ModalItem);
+        return state;
+
+      case ModalActionType.CloseModal:
+        if (currentModal) {
+          currentModal.opened = false;
+          state.set(payloadId, currentModal);
+        }
+        return state;
+
+      case ModalActionType.CloseAllModals:
+        allKeys.forEach((key: string) => {
+          currentModal = state.get(key) as ModalItem;
+          currentModal.opened = false;
+          state.set(key, currentModal);
         });
-      }
+        return state;
 
-      return {
-        ...state,
-        modals,
-      };
+      case ModalActionType.AddLazyModal:
+        if (!registed) {
+          state.set(payloadId, {
+            id: payloadId,
+            loaded: false,
+            isLazy: true,
+            loadFailed: false,
+            loader,
+          } as ModalItem);
+        }
+        return state;
 
-    case ModalActionType.CloseModal:
-      return {
-        ...state,
-        modals: state.modals.map((modal) =>
-          modal.id === payloadId
-            ? {
-                ...modal,
-                opened: false,
-              }
-            : modal
-        ),
-      };
+      case ModalActionType.LazyModalLoaded:
+        if (currentModal) {
+          currentModal.loaded = loaded;
+          currentModal.loadFailed = loadFailed;
+          currentModal.component = component;
+          state.set(payloadId, currentModal as ModalItem);
+        }
 
-    case ModalActionType.CloseModal:
-      return {
-        ...state,
-        modals: state.modals.filter(
-          ({ id, isLazy }) => id !== payloadId && isLazy
-        ),
-      };
+        return state;
 
-    case ModalActionType.CloseAllModals:
-      return {
-        ...state,
-        modals: state.modals.map((modal) => ({
-          ...modal,
-          opened: false,
-        })),
-      };
-
-    case ModalActionType.AddLazyModal:
-      modals = cloneDeep<ModalItem[]>(state.modals);
-      lastIndex = modals.findIndex(({ id }) => id === payloadId);
-
-      if (lastIndex === -1) {
-        modals.push({
-          id: payloadId,
-          loaded: false,
-          isLazy: true,
-          loadFailed: false,
-          loader: action.payload.loader,
-        } as ModalItem);
-      }
-
-      return {
-        ...state,
-        modals,
-      };
-
-    case ModalActionType.LazyModalLoaded:
-      modals = cloneDeep<ModalItem[]>(state.modals);
-
-      return {
-        ...state,
-        modals: modals.map((modal) =>
-          modal.id === payloadId
-            ? {
-                ...modal,
-                loaded: true,
-                loadFailed: false,
-                component: action.payload.component,
-              }
-            : modal
-        ),
-      };
-
-    default:
-      return state;
+      default:
+        return state;
+    }
   }
-};
+);
 
 export interface CloseModalParams {
   id: string;
@@ -152,7 +117,6 @@ export type Actions = {
 
 export type ModalItem = {
   id: string;
-  type: string;
   opened: boolean;
   isLazy?: boolean;
   loaded?: boolean;
@@ -165,6 +129,4 @@ export type ModalItem = {
   };
 };
 
-export type ModalState = {
-  modals: ModalItem[];
-};
+export type ModalStateMap = Map<string, ModalItem>;

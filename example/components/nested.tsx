@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal } from 'react-modal-better-hooks'
+import { useModal } from '../react-modal-better-hooks/react-modal-better-hooks.esm.js'
 
 export default () => {
   const [ChildModal, { open: openNested, close: closeNested, closeAll }] = useModal({

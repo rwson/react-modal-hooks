@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "parcel index.html",
+    "start": "parcel index.html --no-cache",
     "build": "parcel build index.html"
   },
   "dependencies": {
@@ -13,8 +13,7 @@
   },
   "alias": {
     "react": "../node_modules/react",
-    "react-dom": "../node_modules/react-dom",
-    "react-modal-better-hooks": "../dist"
+    "react-dom": "../node_modules/react-dom"
   },
   "devDependencies": {
     "@types/antd": "^1.0.0",

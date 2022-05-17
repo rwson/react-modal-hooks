@@ -1,7 +1,7 @@
 import {
   reducer,
   initialState,
-  ModalState,
+  ModalStateMap,
   Actions,
   ActionsMap,
 } from './reducer';
@@ -21,7 +21,7 @@ export type Dispatcher = <
 ) => void;
 
 const ModalContext = createContext<{
-  state: ModalState;
+  state: ModalStateMap;
   dispatch: Dispatcher;
   defaultProps: any;
 }>({
@@ -52,7 +52,7 @@ export const ModalProvider = ({ children, defaultProps = {} }) => {
 };
 
 export const useModalContext = (): {
-  state: ModalState;
+  state: ModalStateMap;
   dispatch: Dispatcher;
   defaultProps: any;
 } => useContext(ModalContext);

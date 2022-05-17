@@ -1,9 +1,10 @@
-import React, { useMemo, useEffect, ReactElement, cloneElement } from 'react';
 import { ModalActionType } from './constants';
 import { useModalContext } from './context';
 import { ModalItem } from './reducer';
-import merge from 'lodash/merge';
 import WrappedModalComponent from './wrapped';
+import merge from 'lodash/merge';
+import produce from 'immer';
+import React, { useMemo, useEffect, ReactElement, cloneElement } from 'react';
 
 type UseModalParams<T> = {
   id: string;
@@ -44,24 +45,22 @@ export function useModal<T = any>(
     render = params.render;
   }
 
-  console.log(params)
-
   if (typeof keepAlive === 'undefined') {
     keepAlive = true;
   }
 
   if (renderIfClosed && !keepAlive) {
-    throw new Error(`RHMB: 'keepAlive' should must be true when 'renderIfClosed' is true, not ${keepAlive}, Please check your code`)
+    throw new Error(
+      `RHMB: 'keepAlive' should must be true when 'renderIfClosed' is true, not ${keepAlive}, Please check your code`
+    );
   }
 
-  let modal = state.modals.find((modal) => modal.id === id);
-
-  useEffect(() => {
-    modal = state.modals.find((modal) => modal.id === id);
-  }, [state.modals]);
+  const modal = useMemo<ModalItem | undefined>(() => state.get(id), [state, id]);
 
   if (modal) {
-    props = (modal as any).props ?? {};
+    props = Object.assign({}, modal.props, {
+      visible: modal.opened
+    });
     props.visible = modal.opened;
     opened = modal.opened;
 
@@ -92,7 +91,7 @@ export function useModal<T = any>(
     });
 
   const close = () => {
-    dispatch(ModalActionType.CloseModal, { id })
+    dispatch(ModalActionType.CloseModal, { id });
   };
 
   const closeAll = () => dispatch(ModalActionType.CloseAllModals);
