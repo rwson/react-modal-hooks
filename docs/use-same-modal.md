@@ -21,7 +21,13 @@ const App = () => {
 
 export default withModals(App)({
   'modal1-id': () => import('path/to/modal1'),
-  'modal2-id': () => import('path/to/modal2')
+  'modal2-id': () => import('path/to/modal2'),
+  'modal3-id': {
+    loader: () => import('path/to/modal3'),
+    shouldComponentLoad: (propsPassedTo_____App_____Component) {
+      //  do sth and return a boolean value
+    }
+  }
 })
 ```
 
@@ -51,6 +57,9 @@ export default () => {
     id: 'modal1-id'
   })
   const [ Modal2, { open: openModal2 } ] = useModal('modal2-id')
+
+  //  ATTENTION: If the return value of shouldComponentLoad of Modal3 results in no pre-lazy loading, it will be loaded when openModal3 is called, regardless of whether shouldComponentLoad returns true or not
+  const [ Modal3, { open: openModal3 } ] = useModal('modal3-id')
   
   return (
   	<div>

@@ -1,11 +1,13 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
+import Loading from './loading'
+
 import { withModals, useModal } from '../react-modal-better-hooks/react-modal-better-hooks.esm.js'
 
 const Dynmaic = () => {
   const [ LazyModal1, { open: openLazyModal1, close: closeLazyModal1 } ] = useModal('modal-1')
-  const [ LazyModal2, { open: openLazyModal2, close: closeLazyModal2 } ] = useModal('modal-2')
+  const [ LazyModal2, { open: openLazyModal2, close: closeLazyModal2, loading } ] = useModal('modal-2')
 
   return (
     <div>
@@ -22,6 +24,9 @@ const Dynmaic = () => {
       })}>
         Open Lazy Modal2
       </Button>
+      {
+        loading && <Loading />
+      }
       {LazyModal1}
       {LazyModal2}
     </div>
@@ -30,5 +35,8 @@ const Dynmaic = () => {
 
 export default withModals(Dynmaic)({
   'modal-1': () => import('./lazy-modals/modal-1'),
-  'modal-2': () => import('./lazy-modals/modal-2')
+  'modal-2': {
+    loader: () => import('./lazy-modals/modal-2'),
+    shouldComponentLoad: (props) => props.shouldLoadModal2
+  }
 })

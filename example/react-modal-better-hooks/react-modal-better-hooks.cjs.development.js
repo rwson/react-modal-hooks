@@ -32,6 +32,7 @@ var reducer = /*#__PURE__*/produce__default(function (state, action) {
       loader = _ref.loader,
       component = _ref.component,
       loadFailed = _ref.loadFailed,
+      shouldComponentLoad = _ref.shouldComponentLoad,
       loaded = _ref.loaded;
 
   var allKeys = Array.from(state.keys());
@@ -77,7 +78,8 @@ var reducer = /*#__PURE__*/produce__default(function (state, action) {
           loaded: false,
           isLazy: true,
           loadFailed: false,
-          loader: loader
+          loader: loader,
+          shouldComponentLoad: shouldComponentLoad
         });
       }
 
@@ -134,112 +136,6 @@ var ModalProvider = function ModalProvider(_ref) {
 var useModalContext = function useModalContext() {
   return React.useContext(ModalContext);
 };
-
-var WrappedModalComponent = function WrappedModalComponent(_ref) {
-  var render = _ref.render,
-      modalProps = _ref.modalProps,
-      opened = _ref.opened,
-      renderIfClosed = _ref.renderIfClosed;
-
-  if (!opened && !renderIfClosed) {
-    return null;
-  }
-
-  return React__default.createElement(React__default.Fragment, null, render(modalProps));
-};
-
-var WrappedModalComponent$1 = /*#__PURE__*/React.memo(WrappedModalComponent, isEqual);
-
-function useModal(params) {
-  var _useModalContext = useModalContext(),
-      dispatch = _useModalContext.dispatch,
-      state = _useModalContext.state,
-      defaultProps = _useModalContext.defaultProps;
-
-  var opened = false;
-  var props = {};
-  var id, render, renderIfClosed, keepAlive;
-
-  if (typeof params === 'string') {
-    id = params;
-  } else {
-    id = params.id;
-    keepAlive = params.keepAlive;
-    renderIfClosed = params.renderIfClosed;
-    render = params.render;
-  }
-
-  if (typeof keepAlive === 'undefined') {
-    keepAlive = true;
-  }
-
-  if (renderIfClosed && !keepAlive) {
-    throw new Error("RHMB: 'keepAlive' should must be true when 'renderIfClosed' is true, not " + keepAlive + ", Please check your code");
-  }
-
-  var modal = React.useMemo(function () {
-    return state.get(id);
-  }, [state, id]);
-
-  if (modal) {
-    props = Object.assign({}, modal.props, {
-      visible: modal.opened
-    });
-    props.visible = modal.opened;
-    opened = modal.opened;
-
-    if (modal.isLazy) {
-      keepAlive = true;
-
-      if (modal.loaded) {
-        render = modal.component;
-      } else {
-        render = function render() {
-          return null;
-        };
-      }
-    }
-  }
-
-  React.useEffect(function () {
-    return function () {
-      if (!keepAlive) {
-        dispatch(ModalActionType.RemoveModal, {
-          id: id
-        });
-      }
-    };
-  }, [keepAlive, id, dispatch]);
-
-  var open = function open(props) {
-    return dispatch(ModalActionType.OpenModal, {
-      id: id,
-      props: merge(props, defaultProps)
-    });
-  };
-
-  var close = function close() {
-    dispatch(ModalActionType.CloseModal, {
-      id: id
-    });
-  };
-
-  var closeAll = function closeAll() {
-    return dispatch(ModalActionType.CloseAllModals);
-  };
-
-  return [React__default.createElement(WrappedModalComponent$1, {
-    render: render,
-    modalProps: props,
-    opened: opened,
-    renderIfClosed: renderIfClosed
-  }), {
-    opened: opened,
-    open: open,
-    close: close,
-    closeAll: closeAll
-  }];
-}
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -1037,28 +933,184 @@ try {
 }
 });
 
-var moduleLoader = function moduleLoader(importer) {
+var WrappedModalComponent = function WrappedModalComponent(_ref) {
+  var render = _ref.render,
+      modalProps = _ref.modalProps,
+      opened = _ref.opened,
+      renderIfClosed = _ref.renderIfClosed;
+
+  if (!opened && !renderIfClosed) {
+    return null;
+  }
+
+  return React__default.createElement(React__default.Fragment, null, render(modalProps));
+};
+
+var WrappedModalComponent$1 = /*#__PURE__*/React.memo(WrappedModalComponent, isEqual);
+
+function useModal(params) {
+  var _useState = React.useState(false),
+      loading = _useState[0],
+      setLoading = _useState[1];
+
+  var _useModalContext = useModalContext(),
+      dispatch = _useModalContext.dispatch,
+      state = _useModalContext.state,
+      defaultProps = _useModalContext.defaultProps;
+
+  var opened = false;
+  var props = {};
+  var id, render, renderIfClosed, keepAlive;
+
+  if (typeof params === 'string') {
+    id = params;
+  } else {
+    id = params.id;
+    keepAlive = params.keepAlive;
+    renderIfClosed = params.renderIfClosed;
+    render = params.render;
+  }
+
+  if (typeof keepAlive === 'undefined') {
+    keepAlive = true;
+  }
+
+  if (renderIfClosed && !keepAlive) {
+    throw new Error("RHMB: 'keepAlive' should must be true when 'renderIfClosed' is true, not " + keepAlive + ", Please check your code");
+  }
+
+  var modal = React.useMemo(function () {
+    return state.get(id);
+  }, [state, id]);
+
+  if (modal) {
+    props = Object.assign({}, modal.props, {
+      visible: modal.opened
+    });
+    props.visible = modal.opened;
+    opened = modal.opened;
+
+    if (modal.isLazy) {
+      keepAlive = true;
+
+      if (modal.loaded) {
+        render = modal.component;
+      } else {
+        render = function render() {
+          return null;
+        };
+      }
+    }
+  }
+
+  React.useEffect(function () {
+    return function () {
+      if (!keepAlive) {
+        dispatch(ModalActionType.RemoveModal, {
+          id: id
+        });
+      }
+    };
+  }, [keepAlive, id, dispatch]);
+  var open = React.useCallback( /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(props) {
+      var module;
+      return runtime_1.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!loading) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt("return");
+
+            case 2:
+              setLoading(true);
+              _context.next = 5;
+              return modal == null ? void 0 : modal.loader == null ? void 0 : modal.loader();
+
+            case 5:
+              module = _context.sent;
+
+              if (module != null && module["default"]) {
+                dispatch(ModalActionType.LazyModalLoaded, {
+                  loaded: true,
+                  loadFailed: false,
+                  component: module == null ? void 0 : module["default"],
+                  id: id
+                });
+              }
+
+              setLoading(false);
+              dispatch(ModalActionType.OpenModal, {
+                id: id,
+                props: merge(props, defaultProps)
+              });
+
+            case 9:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function (_x) {
+      return _ref.apply(this, arguments);
+    };
+  }(), [id, props, modal, loading]);
+  var close = React.useCallback(function () {
+    dispatch(ModalActionType.CloseModal, {
+      id: id
+    });
+  }, [id]);
+  var closeAll = React.useCallback(function () {
+    return dispatch(ModalActionType.CloseAllModals);
+  }, []);
+  return [React__default.createElement(WrappedModalComponent$1, {
+    render: render,
+    modalProps: props,
+    opened: opened,
+    renderIfClosed: renderIfClosed
+  }), {
+    opened: opened,
+    loading: loading,
+    open: open,
+    close: close,
+    closeAll: closeAll
+  }];
+}
+
+function moduleLoader(importer) {
   return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee() {
-    var module;
+    var loader, module;
     return runtime_1.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return importer();
+            if (typeof importer === 'function') {
+              loader = importer;
+            } else {
+              loader = importer.loader;
+            }
 
-          case 2:
+            _context.next = 3;
+            return loader();
+
+          case 3:
             module = _context.sent;
             return _context.abrupt("return", module);
 
-          case 4:
+          case 5:
           case "end":
             return _context.stop();
         }
       }
     }, _callee);
   }));
-};
+}
 
 function withModals(Component) {
   return function (modals) {
@@ -1077,21 +1129,29 @@ function withModals(Component) {
                   modal = state.get(id);
 
                   if (!modal) {
-                    _context2.next = 13;
+                    _context2.next = 16;
                     break;
                   }
 
-                  _context2.prev = 2;
+                  if (!(modal.shouldComponentLoad && !(modal.shouldComponentLoad != null && modal.shouldComponentLoad(props)))) {
+                    _context2.next = 4;
+                    break;
+                  }
+
+                  return _context2.abrupt("return");
+
+                case 4:
+                  _context2.prev = 4;
 
                   if (!(!modal.loaded || modal.loadFailed)) {
-                    _context2.next = 8;
+                    _context2.next = 10;
                     break;
                   }
 
-                  _context2.next = 6;
+                  _context2.next = 8;
                   return modal.loader == null ? void 0 : modal.loader();
 
-                case 6:
+                case 8:
                   module = _context2.sent;
                   dispatch(ModalActionType.LazyModalLoaded, {
                     loaded: true,
@@ -1100,25 +1160,26 @@ function withModals(Component) {
                     id: id
                   });
 
-                case 8:
-                  _context2.next = 13;
+                case 10:
+                  _context2.next = 16;
                   break;
 
-                case 10:
-                  _context2.prev = 10;
-                  _context2.t0 = _context2["catch"](2);
+                case 12:
+                  _context2.prev = 12;
+                  _context2.t0 = _context2["catch"](4);
+                  console.log(_context2.t0);
                   dispatch(ModalActionType.LazyModalLoaded, {
                     loaded: false,
                     loadFailed: true,
                     id: id
                   });
 
-                case 13:
+                case 16:
                 case "end":
                   return _context2.stop();
               }
             }
-          }, _callee2, null, [[2, 10]]);
+          }, _callee2, null, [[4, 12]]);
         }));
 
         return function (_x) {
@@ -1130,9 +1191,11 @@ function withModals(Component) {
 
         for (var _i = 0, _keys = keys; _i < _keys.length; _i++) {
           var key = _keys[_i];
+          var lazyModalItem = modals[key];
           dispatch(ModalActionType.AddLazyModal, {
             id: key,
-            loader: moduleLoader(modals[key])
+            shouldComponentLoad: lazyModalItem.shouldComponentLoad,
+            loader: moduleLoader(lazyModalItem)
           });
         }
       }, [modals]);

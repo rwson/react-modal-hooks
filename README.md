@@ -123,7 +123,13 @@ export default () => {
  ```typescript
   withModal(SomeRenderWillUseModals)({
     'modalId1': () => import('./path/to/modal1'),
-    'modalId2': () => import('./path/to/modal2')
+    'modalId2': () => import('./path/to/modal2'),
+    'modalId3': {
+      loader: () => import('./path/to/modal3'),
+      shouldComponentLoad: (propsPassedTo_____SomeRenderWillUseModals_____Component) {
+        //  do sth and return a boolean value
+      }
+    }
   })
  ```
 
@@ -136,5 +142,4 @@ export default () => {
 ### Todo
 
 - Perfecting TypeScript types
-- `withModals` HOC Support Specifies whether to lazy load
 

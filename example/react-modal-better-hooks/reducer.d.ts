@@ -10,6 +10,7 @@ export declare const reducer: (base: ReadonlyMap<string, {
     readonly loadFailed?: boolean | undefined;
     readonly visible?: boolean | undefined;
     readonly loader?: Importer<any> | undefined;
+    readonly shouldComponentLoad?: ((props: any) => boolean) | undefined;
     readonly component?: ComponentType | any;
     readonly props?: {
         readonly [x: string]: any;
@@ -51,7 +52,7 @@ export declare type Actions = {
         payload: ActionsMap[Key];
     };
 }[keyof ActionsMap];
-export declare type ModalItem = {
+export declare type ModalItem<T = any> = {
     id: string;
     opened: boolean;
     isLazy?: boolean;
@@ -59,6 +60,7 @@ export declare type ModalItem = {
     loadFailed?: boolean;
     visible?: boolean;
     loader?: Importer;
+    shouldComponentLoad?: (props: T) => boolean;
     component?: ComponentType | any;
     props?: {
         [key: string]: any;

@@ -4,7 +4,7 @@ import { ModalItem } from './reducer';
 import WrappedModalComponent from './wrapped';
 import merge from 'lodash/merge';
 import produce from 'immer';
-import React, { useMemo, useEffect, ReactElement, cloneElement } from 'react';
+import React, { useMemo, useEffect, useState, ReactElement, cloneElement, useCallback } from 'react';
 
 type UseModalParams<T> = {
   id: string;
@@ -23,12 +23,14 @@ export function useModal<T = any>(
 ): [
   ReactElement,
   {
+    loading: boolean,
     opened: boolean;
     open: (props?: T) => void;
     close: () => void;
     closeAll: () => void;
   }
 ] {
+  const [ loading, setLoading ] = useState<boolean>(false);
   const { dispatch, state, defaultProps } = useModalContext();
 
   let opened: boolean = false;
@@ -84,17 +86,37 @@ export function useModal<T = any>(
     };
   }, [keepAlive, id, dispatch]);
 
-  const open = (props) =>
+  const open = useCallback(async(props) => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+
+    const module = await modal?.loader?.()
+
+    if (module?.default) {
+      dispatch(ModalActionType.LazyModalLoaded, {
+        loaded: true,
+        loadFailed: false,
+        component: module?.default,
+        id
+      });
+    }
+
+    setLoading(false);
+
     dispatch(ModalActionType.OpenModal, {
       id,
       props: merge(props, defaultProps),
-    });
+    })
+  }, [id, props, modal, loading]);
 
-  const close = () => {
+  const close = useCallback(() => {
     dispatch(ModalActionType.CloseModal, { id });
-  };
+  }, [id]);
 
-  const closeAll = () => dispatch(ModalActionType.CloseAllModals);
+  const closeAll = useCallback(() => dispatch(ModalActionType.CloseAllModals), []);
 
   return [
     <WrappedModalComponent
@@ -105,6 +127,7 @@ export function useModal<T = any>(
     />,
     {
       opened,
+      loading,
       open,
       close,
       closeAll,

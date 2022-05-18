@@ -9,7 +9,7 @@ export const initialState = new Map();
 
 export const reducer = produce(
   (state: ModalStateMap, action: Actions): ModalStateMap => {
-    const { id: payloadId, props: payloadProps, loader, component, loadFailed, loaded } = action.payload ?? {};
+    const { id: payloadId, props: payloadProps, loader, component, loadFailed, shouldComponentLoad, loaded } = action.payload ?? {};
     const allKeys: Array<string> = Array.from(state.keys());
     const registed: boolean = state.has(payloadId);
 
@@ -54,6 +54,7 @@ export const reducer = produce(
             isLazy: true,
             loadFailed: false,
             loader,
+            shouldComponentLoad
           } as ModalItem);
         }
         return state;
@@ -115,7 +116,7 @@ export type Actions = {
   };
 }[keyof ActionsMap];
 
-export type ModalItem = {
+export type ModalItem<T = any> = {
   id: string;
   opened: boolean;
   isLazy?: boolean;
@@ -123,6 +124,7 @@ export type ModalItem = {
   loadFailed?: boolean;
   visible?: boolean;
   loader?: Importer;
+  shouldComponentLoad?: (props: T) => boolean;
   component?: ComponentType | any;
   props?: {
     [key: string]: any;

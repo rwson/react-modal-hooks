@@ -24,7 +24,7 @@ const AppRoute = () => {
       <Routes>
         <Route path="/normal" element={<Normal />} />
         <Route path="/nested" element={<Nested />} />
-        <Route path="/dynmaic" element={<Dynmaic />} />
+        <Route path="/dynmaic" element={<Dynmaic shouldLoadModal2={false} />} />
       </Routes>
     </div>
   )
