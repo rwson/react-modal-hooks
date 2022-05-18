@@ -81,7 +81,7 @@ export type ModalItem<T = any> = {
 export type ModalStateMap = Map<string, ModalItem>;
 
 export type ModalRenderProps<T> = {
-  [P in keyof T]?: T[P];
+  [K in keyof T]?: T[K];
 } & ModalItem;
 
 export type Dispatcher = <
@@ -96,5 +96,11 @@ export type UseModalParams<T> = {
   id: string;
   keepAlive?: boolean;
   renderIfClosed?: boolean;
-  render?: (props: ModalRenderProps<T>) => any;
+  render?: (props: ModalRenderProps<ModalBasicProps<T>>) => any;
+};
+
+export type ModalBasicProps<T> = {
+  [K in keyof T]?: T[K];
+} & {
+  visible: boolean;
 };

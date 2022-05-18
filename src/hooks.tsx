@@ -6,11 +6,6 @@ import { useModalContext } from './context';
 import { ModalItem, ModalRenderProps, UseModalParams } from './types';
 import WrappedModalComponent from './wrapped';
 
-export type ModalBasicProps<T> = {
-  visible: boolean;
-  [key: string]: any;
-};
-
 export function useModal<T = any>(
   params: UseModalParams<T> | string
 ): [
