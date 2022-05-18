@@ -59,15 +59,16 @@ export default () => {
   const [ Modal2, { open: openModal2 } ] = useModal('modal2-id')
 
   //  ATTENTION: If the return value of shouldComponentLoad of Modal3 results in no pre-lazy loading, it will be loaded when openModal3 is called, regardless of whether shouldComponentLoad returns true or not
-  const [ Modal3, { open: openModal3 } ] = useModal('modal3-id')
+  const [ Modal3, { open: openModal3, loading } ] = useModal('modal3-id')
   
   return (
   	<div>
-      balabala
+      <p>balabala</p>
       <Button onClick={() => openModal1({propKey: 'propValue'})}>Open Modal1</Button>
       <Button onClick={() => openModal2({propKey: 'propValue'})}>Open Modal2</Button>
       {Modal1}
       {Modal2}
+      {Modal3}
     </div>
   )
 }
