@@ -1,17 +1,10 @@
+import React, { useMemo, useEffect, useState, ReactElement, cloneElement, useCallback } from 'react';
+import produce from 'immer';
+
 import { ModalActionType } from './constants';
 import { useModalContext } from './context';
-import { ModalItem } from './reducer';
+import { ModalItem, ModalRenderProps, UseModalParams } from './types';
 import WrappedModalComponent from './wrapped';
-import merge from 'lodash/merge';
-import produce from 'immer';
-import React, { useMemo, useEffect, useState, ReactElement, cloneElement, useCallback } from 'react';
-
-type UseModalParams<T> = {
-  id: string;
-  keepAlive?: boolean;
-  renderIfClosed?: boolean;
-  render?: (props: ModalRenderProps<T>) => any;
-};
 
 export type ModalBasicProps<T> = {
   visible: boolean;
@@ -108,7 +101,7 @@ export function useModal<T = any>(
 
     dispatch(ModalActionType.OpenModal, {
       id,
-      props: merge(props, defaultProps),
+      props: Object.assign({}, props, defaultProps)
     })
   }, [id, props, modal, loading]);
 
@@ -134,7 +127,3 @@ export function useModal<T = any>(
     },
   ];
 }
-
-type ModalRenderProps<T> = {
-  [P in keyof T]?: T[P];
-} & ModalItem;

@@ -1,9 +1,8 @@
-import { ModalActionType } from './constants';
-import { Importer } from './register';
-import produce from 'immer';
-import cloneDeep from 'lodash/cloneDeep';
 import { ComponentType } from 'react';
-import { isEqual } from 'lodash';
+import produce from 'immer';
+
+import { ModalActionType } from './constants';
+import { Importer, CloseModalParams, OpenModalParams, AddLazyModalParams, ActionsMap, Actions, ModalItem, ModalStateMap } from './types';
 
 export const initialState = new Map();
 
@@ -74,61 +73,3 @@ export const reducer = produce(
     }
   }
 );
-
-export interface CloseModalParams {
-  id: string;
-}
-
-export interface OpenModalParams {
-  id: string;
-  props?: {
-    [key: string]: any;
-  };
-}
-
-export interface AddLazyModalParams {
-  id: string;
-  isLazy?: boolean;
-  loaded?: boolean;
-  loadFailed?: boolean;
-  loader?: Importer;
-  component?: ComponentType | any;
-  props?: {
-    [key: string]: any;
-  };
-}
-
-export interface CloseAllModalParams {}
-
-export type ActionsMap = {
-  [ModalActionType.OpenModal]: OpenModalParams;
-  [ModalActionType.AddLazyModal]: AddLazyModalParams;
-  [ModalActionType.LazyModalLoaded]: AddLazyModalParams;
-  [ModalActionType.CloseModal]: CloseModalParams;
-  [ModalActionType.RemoveModal]: CloseModalParams;
-  [ModalActionType.CloseAllModals]: any;
-};
-
-export type Actions = {
-  [Key in keyof ActionsMap]: {
-    type: Key;
-    payload: ActionsMap[Key];
-  };
-}[keyof ActionsMap];
-
-export type ModalItem<T = any> = {
-  id: string;
-  opened: boolean;
-  isLazy?: boolean;
-  loaded?: boolean;
-  loadFailed?: boolean;
-  visible?: boolean;
-  loader?: Importer;
-  shouldComponentLoad?: (props: T) => boolean;
-  component?: ComponentType | any;
-  props?: {
-    [key: string]: any;
-  };
-};
-
-export type ModalStateMap = Map<string, ModalItem>;

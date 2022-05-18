@@ -1,6 +1,5 @@
 /// <reference types="react" />
-import { ModalStateMap, Actions, ActionsMap } from './reducer';
-export declare type Dispatcher = <Type extends Actions['type'], Payload extends ActionsMap[Type]>(type: Type | any, ...payload: Payload extends undefined ? [undefined?] : [Payload] | any) => void;
+import { ModalStateMap, Dispatcher } from './types';
 export declare const ModalProvider: ({ children, defaultProps }: {
     children: any;
     defaultProps?: {} | undefined;

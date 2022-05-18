@@ -1,7 +1,6 @@
 import produce, { enableAllPlugins } from 'immer';
 import React, { useReducer, useCallback, useContext, createContext, memo, useState, useMemo, useEffect } from 'react';
 import isEqual from 'lodash-es/isEqual';
-import merge from 'lodash-es/merge';
 
 var ModalActionType;
 
@@ -99,7 +98,7 @@ var ModalContext = /*#__PURE__*/createContext({
   },
   defaultProps: {}
 });
-ModalContext.displayName = 'RHMBContext';
+ModalContext.displayName = 'RMBH_Context';
 var ModalProvider = function ModalProvider(_ref) {
   var children = _ref.children,
       _ref$defaultProps = _ref.defaultProps,
@@ -1038,7 +1037,7 @@ function useModal(params) {
               setLoading(false);
               dispatch(ModalActionType.OpenModal, {
                 id: id,
-                props: merge(props, defaultProps)
+                props: Object.assign({}, props, defaultProps)
               });
 
             case 9:
@@ -1121,7 +1120,7 @@ function withModals(Component) {
                   modal = state.get(id);
 
                   if (!modal) {
-                    _context2.next = 16;
+                    _context2.next = 15;
                     break;
                   }
 
@@ -1153,20 +1152,19 @@ function withModals(Component) {
                   });
 
                 case 10:
-                  _context2.next = 16;
+                  _context2.next = 15;
                   break;
 
                 case 12:
                   _context2.prev = 12;
                   _context2.t0 = _context2["catch"](4);
-                  console.log(_context2.t0);
                   dispatch(ModalActionType.LazyModalLoaded, {
                     loaded: false,
                     loadFailed: true,
                     id: id
                   });
 
-                case 16:
+                case 15:
                 case "end":
                   return _context2.stop();
               }

@@ -1,6 +1,3 @@
-import { ModalActionType } from './constants';
-import { useModalContext } from './context';
-import { ModalItem } from './reducer';
 import React, {
   ComponentType,
   useEffect,
@@ -8,16 +5,11 @@ import React, {
   PropsWithChildren,
 } from 'react';
 
-export type Importer<T = any> = () => Promise<{
-  default: ComponentType<PropsWithChildren<T>>;
-}>;
+import { ModalActionType } from './constants';
+import { useModalContext } from './context';
+import { Importer, LazyModalItem, RegisterModalsParams, ModalItem } from './types';
 
-export type LazyModalItem<T> = {
-  loader: Importer;
-  shouldComponentLoad(props: T): boolean;
-};
-
-function moduleLoader<T>(importer: Importer | LazyModalItem<T>) {
+function moduleLoader(importer: Importer | LazyModalItem) {
   return async () => {
     let loader: any;
     if (typeof importer === 'function') {
@@ -31,7 +23,7 @@ function moduleLoader<T>(importer: Importer | LazyModalItem<T>) {
   }
 }
 
-export function withModals<T = any>(
+export function withModals<T>(
   Component: ComponentType<PropsWithChildren<T>>
 ) {
   return (modals: RegisterModalsParams<T>) => (props: T) => {
@@ -39,7 +31,7 @@ export function withModals<T = any>(
 
     const loadModal = useCallback(
       async (id: string) => {
-        const modal = state.get(id) as ModalItem<T>;
+        const modal = state.get(id) as ModalItem;
 
         if (modal) {
           if (modal.shouldComponentLoad && !modal.shouldComponentLoad?.(props)) {
@@ -58,8 +50,6 @@ export function withModals<T = any>(
               });
             }
           } catch (e) {
-            console.log(e);
-
             dispatch(ModalActionType.LazyModalLoaded, {
               loaded: false,
               loadFailed: true,
@@ -75,12 +65,12 @@ export function withModals<T = any>(
       const keys: string[] = Object.keys(modals);
 
       for (const key of keys) {
-        const lazyModalItem: Importer | LazyModalItem<T> = modals[key]
+        const lazyModalItem: Importer | LazyModalItem = modals[key]
 
         dispatch(ModalActionType.AddLazyModal, {
           id: key,
-          shouldComponentLoad: (lazyModalItem as LazyModalItem<T>).shouldComponentLoad,
-          loader: moduleLoader<T>(lazyModalItem),
+          shouldComponentLoad: (lazyModalItem as LazyModalItem).shouldComponentLoad,
+          loader: moduleLoader(lazyModalItem)
         });
       }
     }, [modals]);
@@ -100,7 +90,3 @@ export function withModals<T = any>(
     return <Component {...props} />;
   };
 }
-
-export type RegisterModalsParams<T> = {
-  [key: string]: Importer | LazyModalItem<T>;
-};

@@ -1,10 +1,3 @@
-import {
-  reducer,
-  initialState,
-  ModalStateMap,
-  Actions,
-  ActionsMap,
-} from './reducer';
 import React, {
   createContext,
   useReducer,
@@ -12,13 +5,16 @@ import React, {
   useContext,
 } from 'react';
 
-export type Dispatcher = <
-  Type extends Actions['type'],
-  Payload extends ActionsMap[Type]
->(
-  type: Type | any,
-  ...payload: Payload extends undefined ? [undefined?] : [Payload] | any
-) => void;
+import {
+  reducer,
+  initialState
+} from './reducer';
+import {
+  ModalStateMap,
+  Actions,
+  ActionsMap,
+  Dispatcher
+} from './types';
 
 const ModalContext = createContext<{
   state: ModalStateMap;
@@ -30,7 +26,7 @@ const ModalContext = createContext<{
   defaultProps: {},
 });
 
-ModalContext.displayName = 'RHMBContext';
+ModalContext.displayName = 'RMBH_Context';
 
 export const ModalProvider = ({ children, defaultProps = {} }) => {
   const [state, dispatch] = useReducer(reducer, initialState);

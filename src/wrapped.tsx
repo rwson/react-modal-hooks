@@ -1,14 +1,7 @@
 import React, { memo, FC, ReactElement } from 'react';
 import isEqual from 'lodash/isEqual';
 
-type WrappedModalComponentProps = {
-  renderIfClosed?: boolean;
-  opened: boolean;
-  render: (props: any) => any;
-  modalProps: {
-    [key: string]: any;
-  };
-};
+import { WrappedModalComponentProps } from './types';
 
 const WrappedModalComponent: FC<WrappedModalComponentProps> = ({
   render,
