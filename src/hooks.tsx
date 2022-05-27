@@ -1,5 +1,4 @@
-import React, { useMemo, useEffect, useState, ReactElement, cloneElement, useCallback } from 'react';
-import produce from 'immer';
+import React, { useMemo, useEffect, useState, ReactElement, useCallback } from 'react';
 
 import { ModalActionType } from './constants';
 import { useModalContext } from './context';
@@ -75,6 +74,7 @@ export function useModal<T = any>(
   }, [keepAlive, id, dispatch]);
 
   const open = useCallback(async(props) => {
+    //  Avoid to load a same modal more than one time
     if (loading) {
       return;
     }

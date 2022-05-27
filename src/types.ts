@@ -96,7 +96,7 @@ export type UseModalParams<T> = {
   id: string;
   keepAlive?: boolean;
   renderIfClosed?: boolean;
-  render?: (props: ModalRenderProps<ModalBasicProps<T>>) => any;
+  render?: (props: ModalBasicProps<T>) => any;
 };
 
 export type ModalBasicProps<T> = {
