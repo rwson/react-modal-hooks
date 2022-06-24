@@ -3,6 +3,10 @@
 > an eaist way to open/close modals and pass props to modals, or register an dynmaic modal and you can use these modals globally
 
 
+### NOTICE
+in React18, when call the `open` method of a modal, React will throw a like `Warning: Internal React error: Expected static flag was missing.` warning, So, avoid use it in React 18, I will support React18 ASAP.
+
+
 ### Usage
 
 - Install `react-modal-better-hooks`via`yarn`or`npm`
@@ -139,7 +143,6 @@ export default () => {
 - [easier to use the same Modal](https://github.com/rwson/react-modal-hooks/blob/main/docs/use-same-modal.md)
 - [common modal props](https://github.com/rwson/react-modal-hooks/blob/main/docs/common-modal-props.md)
 
-### Todo
 
-- Perfecting TypeScript types
-
+#### TODO
+- support React18

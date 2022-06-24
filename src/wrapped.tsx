@@ -7,7 +7,7 @@ const WrappedModalComponent: FC<WrappedModalComponentProps> = ({
   render,
   modalProps,
   opened,
-  renderIfClosed,
+  renderIfClosed
 }: WrappedModalComponentProps): ReactElement | null => {
   if (!opened && !renderIfClosed) {
     return null;
