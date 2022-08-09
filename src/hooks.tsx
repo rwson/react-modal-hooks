@@ -23,7 +23,7 @@ export function useModal<T = any>(
   let opened: boolean = false;
   let props: any = {};
 
-  let id, render, renderIfClosed, keepAlive;
+  let id, render, renderIfClosed, keepAlive, ignoreEvent;
 
   if (typeof params === 'string') {
     id = params;
@@ -32,10 +32,15 @@ export function useModal<T = any>(
     keepAlive = params.keepAlive;
     renderIfClosed = params.renderIfClosed;
     render = params.render;
+    ignoreEvent = params.ignoreEvent;
   }
 
   if (typeof keepAlive === 'undefined') {
     keepAlive = true;
+  }
+
+  if (typeof ignoreEvent === 'undefined') {
+    ignoreEvent = true;
   }
 
   if (renderIfClosed && !keepAlive) {
@@ -63,23 +68,26 @@ export function useModal<T = any>(
     }
   }
 
-  useEffect(() => {
-    return () => {
-      if (!keepAlive) {
-        dispatch(ModalActionType.RemoveModal, {
-          id,
-        });
-      }
-    };
-  }, [keepAlive, id, dispatch]);
-
-  const open = useCallback(async(props) => {
+  const open = useCallback(async(openProps) => {
     //  Avoid to load a same modal more than one time
     if (loading) {
       return;
     }
 
     setLoading(true);
+
+    let realProps = {}
+    const paramsIsEvent = Boolean(openProps.target)
+
+    if (!ignoreEvent && paramsIsEvent) {
+      realProps = {
+        event: openProps
+      }
+    }
+
+    if (!paramsIsEvent) {
+      realProps = openProps
+    }
 
     const module = await modal?.loader?.()
 
@@ -96,7 +104,7 @@ export function useModal<T = any>(
 
     dispatch(ModalActionType.OpenModal, {
       id,
-      props: Object.assign({}, props, defaultProps)
+      props: Object.assign({}, props, realProps, defaultProps)
     })
   }, [id, props, modal, loading]);
 
@@ -105,6 +113,16 @@ export function useModal<T = any>(
   }, [id]);
 
   const closeAll = useCallback(() => dispatch(ModalActionType.CloseAllModals), []);
+
+  useEffect(() => {
+    return () => {
+      if (!keepAlive) {
+        dispatch(ModalActionType.RemoveModal, {
+          id,
+        });
+      }
+    };
+  }, [keepAlive, id, dispatch]);
 
   return [
     <WrappedModalComponent

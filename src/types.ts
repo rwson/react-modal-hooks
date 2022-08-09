@@ -94,6 +94,7 @@ export type Dispatcher = <
 
 export type UseModalParams<T> = {
   id: string;
+  ignoreEvent?: boolean;
   keepAlive?: boolean;
   renderIfClosed?: boolean;
   render?: (props: ModalBasicProps<T>) => any;

@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { ModalStateMap, Dispatcher } from './types';
 export declare const ModalProvider: ({ children, defaultProps }: {
     children: any;

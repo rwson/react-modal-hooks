@@ -108,13 +108,14 @@ export default () => {
 - `useModal` parameters
 
   - `Object` type
-  
+
   | name             | description                                                  | defaultValue | required |
   | ---------------- | ------------------------------------------------------------ | ------------ | -------- |
   | `id`             | `id` specified when registering `Modal`                      | `N/A`        | Y        |
   | `render`         | `render method` of `Modal`                                   | `undefined`  | N        |
   | `renderIfClosed` | When the `Modal` is not opened, the `Modal` will also be mount | `false`      | N        |
   | `keepAlive`      | If the current `Modal` is a `LazyModal`, `keepAlive` is always `true`, this is to avoid reloading the corresponding component, if not `LazyModal`, in the case of `renderIfClosed` specifying `true`, `keepAlive` must also be `true` | `true`       | N        |
+  | `ignoreEvent`    | `SyntheticEvent` will passed to `Modal` as `props`,  It's wrapped with`{ event: SyntheticEvent, ...otherProps }`. when `ignoreEvent` is `false`, the event object will not be delivered | `true`       | N        |
 
   - `String` as `ModalId`
 
@@ -137,7 +138,3 @@ export default () => {
 - [reduce the unnecessary business code](https://github.com/rwson/react-modal-hooks/blob/main/docs/business-code.md)
 - [easier to use the same Modal](https://github.com/rwson/react-modal-hooks/blob/main/docs/use-same-modal.md)
 - [common modal props](https://github.com/rwson/react-modal-hooks/blob/main/docs/common-modal-props.md)
-
-
-#### TODO
-- support React18

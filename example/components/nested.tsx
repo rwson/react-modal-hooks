@@ -5,7 +5,7 @@ import { useModal } from '../react-modal-better-hooks/react-modal-better-hooks.e
 
 export default () => {
   const [ChildModal, { open: openNested, close: closeNested, closeAll }] = useModal({
-    id: 'child-modal', 
+    id: 'child-modal',
     render: (props) => {
       return (
         <Modal {...props} onCancel={closeNested} width="400px">
@@ -17,8 +17,11 @@ export default () => {
   })
 
   const [OutModal, { open, close }] = useModal({
-    id: 'out-modal', 
+    id: 'out-modal',
+    ignoreEvent: false,
     render: (props) => {
+      console.log(props)
+
       return (
         <Modal {...props} onCancel={close}>
           <p>I'm Out Modal</p>
@@ -37,9 +40,7 @@ export default () => {
   return (
     <div>
       <Button
-        onClick={() =>
-          open()
-        }
+        onClick={open}
       >
         Open Out Modal
       </Button>

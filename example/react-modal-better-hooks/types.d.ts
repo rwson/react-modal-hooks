@@ -2,7 +2,6 @@ import { ComponentType, PropsWithChildren } from 'react';
 import { ModalActionType } from './constants';
 export declare type WrappedModalComponentProps = {
     renderIfClosed?: boolean;
-    container?: string;
     opened: boolean;
     render: (props: any) => any;
     modalProps: {
@@ -74,9 +73,9 @@ export declare type ModalRenderProps<T> = {
 export declare type Dispatcher = <Type extends Actions['type'], Payload extends ActionsMap[Type]>(type: Type | any, ...payload: Payload extends undefined ? [undefined?] : [Payload] | any) => void;
 export declare type UseModalParams<T> = {
     id: string;
+    ignoreEvent?: boolean;
     keepAlive?: boolean;
     renderIfClosed?: boolean;
-    container?: string;
     render?: (props: ModalBasicProps<T>) => any;
 };
 export declare type ModalBasicProps<T> = {
