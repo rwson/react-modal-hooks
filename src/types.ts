@@ -101,7 +101,7 @@ export type UseModalParams<T> = {
 };
 
 export type ModalBasicProps<T> = {
-  [K in keyof T]?: T[K];
+  [K in keyof T]: T[K];
 } & {
   visible: boolean;
 };

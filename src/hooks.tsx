@@ -76,8 +76,8 @@ export function useModal<T = any>(
 
     setLoading(true);
 
+    const paramsIsEvent = Boolean(openProps?.target ?? null)
     let realProps = {}
-    const paramsIsEvent = Boolean(openProps.target)
 
     if (!ignoreEvent && paramsIsEvent) {
       realProps = {
