@@ -1,19 +1,25 @@
-import React, { memo, FC, ReactElement } from 'react';
+import React, { FC, ReactElement } from 'react';
 import isEqual from 'lodash/isEqual';
 
 import { WrappedModalComponentProps } from './types';
 
-const WrappedModalComponent: FC<WrappedModalComponentProps> = ({
-  render,
-  modalProps,
-  opened,
-  renderIfClosed
-}: WrappedModalComponentProps): ReactElement | null => {
-  if (!opened && !renderIfClosed) {
-    return null;
-  }
+const makeWrappedModalComponent = (displayName?: string) => {
+  const _WrappedModalComponent: FC<WrappedModalComponentProps> = ({
+    render,
+    modalProps,
+    opened,
+    renderIfClosed
+  }: WrappedModalComponentProps): ReactElement | null => {
+    if (!opened && !renderIfClosed) {
+      return null;
+    }
+  
+    return <>{render(modalProps)}</>;
+  };
 
-  return <>{render(modalProps)}</>;
+  _WrappedModalComponent.displayName = displayName || 'RMBH_WrappedModalComponent';
+
+  return _WrappedModalComponent
 };
 
-export default memo(WrappedModalComponent, isEqual);
+export default makeWrappedModalComponent;

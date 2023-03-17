@@ -1,4 +1,4 @@
 import React from 'react';
 import { WrappedModalComponentProps } from './types';
-declare const _default: React.NamedExoticComponent<WrappedModalComponentProps>;
-export default _default;
+declare const makeWrappedModalComponent: (displayName?: string | undefined) => React.FC<WrappedModalComponentProps>;
+export default makeWrappedModalComponent;

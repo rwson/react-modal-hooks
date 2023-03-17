@@ -1,9 +1,9 @@
-import React, { useMemo, useEffect, useState, ReactElement, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, ReactElement, useCallback, createElement } from 'react';
 
 import { ModalActionType } from './constants';
 import { useModalContext } from './context';
 import { ModalItem, ModalRenderProps, UseModalParams } from './types';
-import WrappedModalComponent from './wrapped';
+import makeWrappedModalComponent from './wrapped';
 
 export function useModal<T = any>(
   params: UseModalParams<T> | string
@@ -23,7 +23,7 @@ export function useModal<T = any>(
   let opened: boolean = false;
   let props: any = {};
 
-  let id, render, renderIfClosed, keepAlive, ignoreEvent;
+  let id, render, renderIfClosed, keepAlive, ignoreEvent, displayName;
 
   if (typeof params === 'string') {
     id = params;
@@ -33,6 +33,7 @@ export function useModal<T = any>(
     renderIfClosed = params.renderIfClosed;
     render = params.render;
     ignoreEvent = params.ignoreEvent;
+    displayName = params.displayName;
   }
 
   if (typeof keepAlive === 'undefined') {
@@ -60,6 +61,8 @@ export function useModal<T = any>(
 
     if (modal.isLazy) {
       keepAlive = true;
+      displayName = modal.displayName;
+
       if (modal.loaded) {
         render = modal.component;
       } else {
@@ -124,13 +127,18 @@ export function useModal<T = any>(
     };
   }, [keepAlive, id, dispatch]);
 
+  if (props.displayName) {
+    displayName = props.displayName;
+    delete props.displayName;
+  }
+
   return [
-    <WrappedModalComponent
-      render={render}
-      modalProps={props}
-      opened={opened}
-      renderIfClosed={renderIfClosed}
-    />,
+    createElement(makeWrappedModalComponent(displayName), {
+      modalProps: props,
+      render,
+      renderIfClosed,
+      opened
+    }),
     {
       opened,
       loading,

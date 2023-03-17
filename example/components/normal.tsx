@@ -8,6 +8,7 @@ export default () => {
     id: 'normal-modal',
     renderIfClosed: true,
     keepAlive: true,
+    displayName: 'NormalModal',
     render: (props) => {
       return (
         <Modal {...props} onCancel={close}>

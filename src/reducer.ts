@@ -52,6 +52,7 @@ export const reducer = produce(
             loaded: false,
             isLazy: true,
             loadFailed: false,
+            displayName: action.payload.displayName,
             loader,
             shouldComponentLoad
           } as ModalItem);

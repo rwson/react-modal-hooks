@@ -85,7 +85,7 @@ export default () => {
     Modal1Component, 
     { open: openModal1, close, closeAll } 
     ] = useModal({
-      id: 'modal1-id', 
+      id: 'modal1-id',
       render: (props) => <Modal1 {...props} onCancel={close} closeAll={closeAll} />
     })
   
@@ -116,6 +116,7 @@ export default () => {
   | `renderIfClosed` | When the `Modal` is not opened, the `Modal` will also be mount | `false`      | N        |
   | `keepAlive`      | If the current `Modal` is a `LazyModal`, `keepAlive` is always `true`, this is to avoid reloading the corresponding component, if not `LazyModal`, in the case of `renderIfClosed` specifying `true`, `keepAlive` must also be `true` | `true`       | N        |
   | `ignoreEvent`    | `SyntheticEvent` will passed to `Modal` as `props`,  It's wrapped with`{ event: SyntheticEvent, ...otherProps }`. when `ignoreEvent` is `false`, the event object will not be delivered | `true`       | N        |
+  | `displayName`         | If  is specified, the wrapped `Modal` component will display this name in the `React Component Tree`, It's easy to debug        | `undefined`  | N        |
 
   - `String` as `ModalId`
 
@@ -123,7 +124,10 @@ export default () => {
  ```typescript
   withModal(SomeRenderWillUseModals)({
     'modalId1': () => import('./path/to/modal1'),
-    'modalId2': () => import('./path/to/modal2'),
+    'modalId2': {
+      loader: () => import('./path/to/modal2'),
+      displayName: 'ModalName',
+    },
     'modalId3': {
       loader: () => import('./path/to/modal3'),
       shouldComponentLoad: (propsPassedTo_____SomeRenderWillUseModals_____Component) {

@@ -7,6 +7,7 @@ export declare const reducer: (base: ReadonlyMap<string, {
     readonly loaded?: boolean | undefined;
     readonly loadFailed?: boolean | undefined;
     readonly visible?: boolean | undefined;
+    readonly displayName?: string | undefined;
     readonly loader?: Importer<any> | undefined;
     readonly shouldComponentLoad?: ((props: any) => boolean) | undefined;
     readonly component?: any;

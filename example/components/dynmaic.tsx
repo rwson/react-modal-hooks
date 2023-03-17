@@ -34,9 +34,13 @@ const Dynmaic = () => {
 };
 
 export default withModals(Dynmaic)({
-  'modal-1': () => import('./lazy-modals/modal-1'),
+  'modal-1': {
+    loader: () => import('./lazy-modals/modal-1'),
+    displayName: 'LazyModalFirst'
+  },
   'modal-2': {
     loader: () => import('./lazy-modals/modal-2'),
+    displayName: 'LazyModalSecond',
     shouldComponentLoad: (props) => props.shouldLoadModal2
   }
 })
