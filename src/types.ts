@@ -18,7 +18,7 @@ export type Importer<T = any> = () => Promise<{
 export type LazyModalItem<T = any> = {
   loader: Importer;
   displayName?: string;
-  shouldComponentLoad(props: T): boolean;
+  shouldComponentLoad(props: T)?: boolean;
 };
 
 export type RegisterModalsParams<T = any> = {
