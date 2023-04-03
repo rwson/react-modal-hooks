@@ -1,9 +1,9 @@
-import React, { useMemo, useEffect, useState, ReactElement, useCallback, createElement } from 'react';
+import React, { useMemo, useEffect, useState, ReactElement, useCallback, createElement, useRef, cloneElement } from 'react';
 
 import { ModalActionType } from './constants';
 import { useModalContext } from './context';
-import { ModalItem, ModalRenderProps, UseModalParams } from './types';
-import makeWrappedModalComponent from './wrapped';
+import { ModalItem, ModalRenderProps, UseModalParams, UpdateModalParams } from './types';
+import makeWrappedModalComponent, { WrappedModalComponent } from './wrapped';
 
 export function useModal<T = any>(
   params: UseModalParams<T> | string
@@ -13,15 +13,18 @@ export function useModal<T = any>(
     loading: boolean,
     opened: boolean;
     open: (props?: T) => void;
+    update: (params: UpdateModalParams<T>) => void;
     close: () => void;
     closeAll: () => void;
   }
 ] {
   const [ loading, setLoading ] = useState<boolean>(false);
+
+  const propsRef = useRef<any>({});
+
   const { dispatch, state, defaultProps } = useModalContext();
 
   let opened: boolean = false;
-  let props: any = {};
 
   let id, render, renderIfClosed, keepAlive, ignoreEvent, displayName;
 
@@ -53,10 +56,9 @@ export function useModal<T = any>(
   const modal = useMemo<ModalItem | undefined>(() => state.get(id), [state, id]);
 
   if (modal) {
-    props = Object.assign({}, modal.props, {
+    propsRef.current = Object.assign({}, modal.props, {
       visible: modal.opened
     });
-    props.visible = modal.opened;
     opened = modal.opened;
 
     if (modal.isLazy) {
@@ -80,16 +82,16 @@ export function useModal<T = any>(
     setLoading(true);
 
     const paramsIsEvent = Boolean(openProps?.target ?? null)
-    let realProps = {}
+    let extraProps = {}
 
     if (!ignoreEvent && paramsIsEvent) {
-      realProps = {
+      extraProps = {
         event: openProps
       }
     }
 
     if (!paramsIsEvent) {
-      realProps = openProps
+      extraProps = openProps
     }
 
     const module = await modal?.loader?.()
@@ -107,9 +109,22 @@ export function useModal<T = any>(
 
     dispatch(ModalActionType.OpenModal, {
       id,
-      props: Object.assign({}, props, realProps, defaultProps)
+      props: Object.assign({}, defaultProps, extraProps, propsRef.current)
     })
-  }, [id, props, modal, loading]);
+  }, [id, propsRef.current, modal, loading]);
+
+  const update = useCallback(({ merge, props }: UpdateModalParams<T>) => {
+    if (merge) {
+      propsRef.current = Object.assign({}, defaultProps, propsRef.current, props);
+    } else {
+      propsRef.current = Object.assign({}, defaultProps, props);
+    }
+
+    dispatch(ModalActionType.UpdateModal, {
+      id,
+      props: Object.assign({}, defaultProps, propsRef.current)
+    });
+  }, [id, propsRef, modal]);
 
   const close = useCallback(() => {
     dispatch(ModalActionType.CloseModal, { id });
@@ -127,24 +142,25 @@ export function useModal<T = any>(
     };
   }, [keepAlive, id, dispatch]);
 
-  if (props.displayName) {
-    displayName = props.displayName;
-    delete props.displayName;
+  if (propsRef.current.displayName) {
+    displayName = propsRef.current.displayName;
+    delete propsRef.current.displayName;
   }
 
   return [
-    createElement(makeWrappedModalComponent(displayName), {
-      modalProps: props,
-      render,
-      renderIfClosed,
+    createElement(WrappedModalComponent, {
+      modalProps: propsRef.current,
+      render: render,
+      renderIfClosed: renderIfClosed,
       opened
     }),
     {
       opened,
       loading,
       open,
+      update,
       close,
       closeAll,
-    },
+    }
   ];
 }

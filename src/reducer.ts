@@ -30,6 +30,14 @@ export const reducer = produce(
         state.set(payloadId, currentModal as ModalItem);
         return state;
 
+      case ModalActionType.UpdateModal:
+        currentModal = Object.assign({}, action.payload, {
+          opened: true,
+        });
+        state.set(payloadId, currentModal as ModalItem);
+      return state;
+
+
       case ModalActionType.CloseModal:
         if (currentModal) {
           currentModal.opened = false;

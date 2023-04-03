@@ -1,10 +1,11 @@
 import produce, { enableAllPlugins } from 'immer';
-import React, { useReducer, useCallback, useContext, createContext, useState, useMemo, useEffect, createElement } from 'react';
+import React, { useReducer, useCallback, useContext, createContext, useState, useRef, useMemo, useEffect, createElement } from 'react';
 
 var ModalActionType;
 
 (function (ModalActionType) {
   ModalActionType["OpenModal"] = "OpenModal";
+  ModalActionType["UpdateModal"] = "UpdateModal";
   ModalActionType["CloseModal"] = "CloseModal";
   ModalActionType["CloseAllModals"] = "CloseAllModals";
   ModalActionType["RemoveModal"] = "RemoveModal";
@@ -42,6 +43,13 @@ var reducer = /*#__PURE__*/produce(function (state, action) {
         });
       }
 
+      state.set(payloadId, currentModal);
+      return state;
+
+    case ModalActionType.UpdateModal:
+      currentModal = Object.assign({}, action.payload, {
+        opened: true
+      });
       state.set(payloadId, currentModal);
       return state;
 
@@ -924,22 +932,17 @@ try {
 }
 });
 
-var makeWrappedModalComponent = function makeWrappedModalComponent(displayName) {
-  var _WrappedModalComponent = function _WrappedModalComponent(_ref) {
-    var render = _ref.render,
-        modalProps = _ref.modalProps,
-        opened = _ref.opened,
-        renderIfClosed = _ref.renderIfClosed;
+var WrappedModalComponent = function WrappedModalComponent(_ref) {
+  var render = _ref.render,
+      modalProps = _ref.modalProps,
+      opened = _ref.opened,
+      renderIfClosed = _ref.renderIfClosed;
 
-    if (!opened && !renderIfClosed) {
-      return null;
-    }
+  if (!opened && !renderIfClosed) {
+    return null;
+  }
 
-    return React.createElement(React.Fragment, null, render(modalProps));
-  };
-
-  _WrappedModalComponent.displayName = displayName || 'RMBH_WrappedModalComponent';
-  return _WrappedModalComponent;
+  return React.createElement(React.Fragment, null, render(modalProps));
 };
 
 function useModal(params) {
@@ -947,14 +950,15 @@ function useModal(params) {
       loading = _useState[0],
       setLoading = _useState[1];
 
+  var propsRef = useRef({});
+
   var _useModalContext = useModalContext(),
       dispatch = _useModalContext.dispatch,
       state = _useModalContext.state,
       defaultProps = _useModalContext.defaultProps;
 
   var opened = false;
-  var props = {};
-  var id, render, renderIfClosed, keepAlive, ignoreEvent, displayName;
+  var id, render, renderIfClosed, keepAlive, ignoreEvent;
 
   if (typeof params === 'string') {
     id = params;
@@ -964,7 +968,6 @@ function useModal(params) {
     renderIfClosed = params.renderIfClosed;
     render = params.render;
     ignoreEvent = params.ignoreEvent;
-    displayName = params.displayName;
   }
 
   if (typeof keepAlive === 'undefined') {
@@ -984,15 +987,13 @@ function useModal(params) {
   }, [state, id]);
 
   if (modal) {
-    props = Object.assign({}, modal.props, {
+    propsRef.current = Object.assign({}, modal.props, {
       visible: modal.opened
     });
-    props.visible = modal.opened;
     opened = modal.opened;
 
     if (modal.isLazy) {
       keepAlive = true;
-      displayName = modal.displayName;
 
       if (modal.loaded) {
         render = modal.component;
@@ -1008,7 +1009,7 @@ function useModal(params) {
     var _ref = _asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(openProps) {
       var _openProps$target;
 
-      var paramsIsEvent, realProps, module;
+      var paramsIsEvent, extraProps, module;
       return runtime_1.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -1023,16 +1024,16 @@ function useModal(params) {
             case 2:
               setLoading(true);
               paramsIsEvent = Boolean((_openProps$target = openProps == null ? void 0 : openProps.target) != null ? _openProps$target : null);
-              realProps = {};
+              extraProps = {};
 
               if (!ignoreEvent && paramsIsEvent) {
-                realProps = {
+                extraProps = {
                   event: openProps
                 };
               }
 
               if (!paramsIsEvent) {
-                realProps = openProps;
+                extraProps = openProps;
               }
 
               _context.next = 9;
@@ -1053,7 +1054,7 @@ function useModal(params) {
               setLoading(false);
               dispatch(ModalActionType.OpenModal, {
                 id: id,
-                props: Object.assign({}, props, realProps, defaultProps)
+                props: Object.assign({}, defaultProps, extraProps, propsRef.current)
               });
 
             case 13:
@@ -1067,7 +1068,22 @@ function useModal(params) {
     return function (_x) {
       return _ref.apply(this, arguments);
     };
-  }(), [id, props, modal, loading]);
+  }(), [id, propsRef.current, modal, loading]);
+  var update = useCallback(function (_ref2) {
+    var merge = _ref2.merge,
+        props = _ref2.props;
+
+    if (merge) {
+      propsRef.current = Object.assign({}, defaultProps, propsRef.current, props);
+    } else {
+      propsRef.current = Object.assign({}, defaultProps, props);
+    }
+
+    dispatch(ModalActionType.UpdateModal, {
+      id: id,
+      props: Object.assign({}, defaultProps, propsRef.current)
+    });
+  }, [id, propsRef, modal]);
   var close = useCallback(function () {
     dispatch(ModalActionType.CloseModal, {
       id: id
@@ -1086,13 +1102,12 @@ function useModal(params) {
     };
   }, [keepAlive, id, dispatch]);
 
-  if (props.displayName) {
-    displayName = props.displayName;
-    delete props.displayName;
+  if (propsRef.current.displayName) {
+    delete propsRef.current.displayName;
   }
 
-  return [createElement(makeWrappedModalComponent(displayName), {
-    modalProps: props,
+  return [createElement(WrappedModalComponent, {
+    modalProps: propsRef.current,
     render: render,
     renderIfClosed: renderIfClosed,
     opened: opened
@@ -1100,6 +1115,7 @@ function useModal(params) {
     opened: opened,
     loading: loading,
     open: open,
+    update: update,
     close: close,
     closeAll: closeAll
   }];
@@ -1149,32 +1165,31 @@ function withModals(Component) {
               switch (_context2.prev = _context2.next) {
                 case 0:
                   modal = state.get(id);
-                  console.log(state);
 
                   if (!modal) {
-                    _context2.next = 16;
+                    _context2.next = 15;
                     break;
                   }
 
                   if (!(modal.shouldComponentLoad && !(modal.shouldComponentLoad != null && modal.shouldComponentLoad(props)))) {
-                    _context2.next = 5;
+                    _context2.next = 4;
                     break;
                   }
 
                   return _context2.abrupt("return");
 
-                case 5:
-                  _context2.prev = 5;
+                case 4:
+                  _context2.prev = 4;
 
                   if (!(!modal.loaded || modal.loadFailed)) {
-                    _context2.next = 11;
+                    _context2.next = 10;
                     break;
                   }
 
-                  _context2.next = 9;
+                  _context2.next = 8;
                   return modal.loader == null ? void 0 : modal.loader();
 
-                case 9:
+                case 8:
                   module = _context2.sent;
                   dispatch(ModalActionType.LazyModalLoaded, {
                     loaded: true,
@@ -1183,25 +1198,25 @@ function withModals(Component) {
                     id: id
                   });
 
-                case 11:
-                  _context2.next = 16;
+                case 10:
+                  _context2.next = 15;
                   break;
 
-                case 13:
-                  _context2.prev = 13;
-                  _context2.t0 = _context2["catch"](5);
+                case 12:
+                  _context2.prev = 12;
+                  _context2.t0 = _context2["catch"](4);
                   dispatch(ModalActionType.LazyModalLoaded, {
                     loaded: false,
                     loadFailed: true,
                     id: id
                   });
 
-                case 16:
+                case 15:
                 case "end":
                   return _context2.stop();
               }
             }
-          }, _callee2, null, [[5, 13]]);
+          }, _callee2, null, [[4, 12]]);
         }));
 
         return function (_x) {
@@ -1214,7 +1229,6 @@ function withModals(Component) {
         for (var _i = 0, _keys = keys; _i < _keys.length; _i++) {
           var key = _keys[_i];
           var lazyModalItem = modals[key];
-          console.log(lazyModalItem);
           dispatch(ModalActionType.AddLazyModal, {
             id: key,
             displayName: lazyModalItem.displayName,

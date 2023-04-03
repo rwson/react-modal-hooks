@@ -18,7 +18,7 @@ export type Importer<T = any> = () => Promise<{
 export type LazyModalItem<T = any> = {
   loader: Importer;
   displayName?: string;
-  shouldComponentLoad(props: T)?: boolean;
+  shouldComponentLoad?: (props: T) => boolean;
 };
 
 export type RegisterModalsParams<T = any> = {
@@ -55,6 +55,7 @@ export type ActionsMap = {
   [ModalActionType.LazyModalLoaded]: AddLazyModalParams;
   [ModalActionType.CloseModal]: CloseModalParams;
   [ModalActionType.RemoveModal]: CloseModalParams;
+  [ModalActionType.UpdateModal]: any;
   [ModalActionType.CloseAllModals]: any;
 };
 
@@ -103,6 +104,11 @@ export type UseModalParams<T> = {
   renderIfClosed?: boolean;
   render?: (props: ModalBasicProps<T>) => any;
 };
+
+export type UpdateModalParams<T> = {
+  merge?: boolean
+  props: Partial<T>
+}
 
 export type ModalBasicProps<T> = {
   [K in keyof T]: T[K];

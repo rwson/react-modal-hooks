@@ -44,4 +44,4 @@ const App2 = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<App2 />)
+ReactDOM.render(<App2 />, document.getElementById('root') as HTMLElement)
