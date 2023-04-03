@@ -1,9 +1,9 @@
-import React, { useMemo, useEffect, useState, ReactElement, useCallback, createElement, useRef, cloneElement } from 'react';
+import React, { useMemo, useEffect, FC, useState, ReactElement, useCallback, createElement, useRef } from 'react';
 
 import { ModalActionType } from './constants';
 import { useModalContext } from './context';
-import { ModalItem, ModalRenderProps, UseModalParams, UpdateModalParams } from './types';
-import makeWrappedModalComponent, { WrappedModalComponent } from './wrapped';
+import { ModalItem, ModalRenderProps, UseModalParams, UpdateModalParams, WrappedModalComponentProps } from './types';
+import { WrappedModalComponent } from './wrapped';
 
 export function useModal<T = any>(
   params: UseModalParams<T> | string
@@ -11,7 +11,6 @@ export function useModal<T = any>(
   ReactElement,
   {
     loading: boolean,
-    opened: boolean;
     open: (props?: T) => void;
     update: (params: UpdateModalParams<T>) => void;
     close: () => void;
@@ -26,7 +25,7 @@ export function useModal<T = any>(
 
   let opened: boolean = false;
 
-  let id, render, renderIfClosed, keepAlive, ignoreEvent, displayName;
+  let id, render, renderIfClosed, keepAlive, ignoreEvent;
 
   if (typeof params === 'string') {
     id = params;
@@ -36,7 +35,6 @@ export function useModal<T = any>(
     renderIfClosed = params.renderIfClosed;
     render = params.render;
     ignoreEvent = params.ignoreEvent;
-    displayName = params.displayName;
   }
 
   if (typeof keepAlive === 'undefined') {
@@ -63,7 +61,6 @@ export function useModal<T = any>(
 
     if (modal.isLazy) {
       keepAlive = true;
-      displayName = modal.displayName;
 
       if (modal.loaded) {
         render = modal.component;
@@ -142,11 +139,6 @@ export function useModal<T = any>(
     };
   }, [keepAlive, id, dispatch]);
 
-  if (propsRef.current.displayName) {
-    displayName = propsRef.current.displayName;
-    delete propsRef.current.displayName;
-  }
-
   return [
     createElement(WrappedModalComponent, {
       modalProps: propsRef.current,
@@ -155,7 +147,6 @@ export function useModal<T = any>(
       opened
     }),
     {
-      opened,
       loading,
       open,
       update,

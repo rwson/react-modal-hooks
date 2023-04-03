@@ -1109,18 +1109,12 @@ function useModal(params) {
       }
     };
   }, [keepAlive, id, dispatch]);
-
-  if (propsRef.current.displayName) {
-    delete propsRef.current.displayName;
-  }
-
   return [React.createElement(WrappedModalComponent, {
     modalProps: propsRef.current,
     render: render,
     renderIfClosed: renderIfClosed,
     opened: opened
   }), {
-    opened: opened,
     loading: loading,
     open: open,
     update: update,

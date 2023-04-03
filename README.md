@@ -29,7 +29,7 @@ export default () => {
 }
 ```
 
-- If you need use some Modals globally, use `withModals` HOC to wrap your Entry Component
+- If you need use some Modals globally, use withModals HOC to wrap your Entry Component
 ```jsx
 import { withModals } from 'react-modal-better-hooks'
 
@@ -50,14 +50,9 @@ export default withModals(App)({
 - lazy-modal1-id.tsx
 ```jsx
 import { useModal } from 'react-modal-better-hooks'
+import { Modal } from 'third-part'
 
 export default (props) => {
-  const [, { close }] = useModal({
-    id: 'lazy-modal1-id',
-    renderIfClosed: true
-  })
-
-  //  Or
   const [, { close }] = useModal('lazy-modal1-id')
 
   return (
@@ -91,12 +86,12 @@ export default () => {
   
   return (
      <div>
-       <LazyModal1Component />
-       <Modal1Component />
        <Button onClick={() => openModal1({
          propkey1: 'propkey1',
          propkey2: 'propkey2'
        })}></Button>
+      {Modal1Component}
+      {LazyModal1Component}
      </div>
   )
 }
@@ -115,10 +110,22 @@ export default () => {
   | `render`         | `render method` of `Modal`                                   | `undefined`  | N        |
   | `renderIfClosed` | When the `Modal` is not opened, the `Modal` will also be mount | `false`      | N        |
   | `keepAlive`      | If the current `Modal` is a `LazyModal`, `keepAlive` is always `true`, this is to avoid reloading the corresponding component, if not `LazyModal`, in the case of `renderIfClosed` specifying `true`, `keepAlive` must also be `true` | `true`       | N        |
-  | `ignoreEvent`    | `SyntheticEvent` will passed to `Modal` as `props`,  It's wrapped with`{ event: SyntheticEvent, ...otherProps }`. when `ignoreEvent` is `false`, the event object will not be delivered | `true`       | N        |
-  | `displayName`         | If  is specified, the wrapped `Modal` component will display this name in the `React Component Tree`, It's easy to debug        | `undefined`  | N        |
-
+  | `ignoreEvent`    | `SyntheticEvent` will passed to `Modal` as `props`,  It's wrapped with`{ event: SyntheticEvent, ...otherProps }`. when `ignoreEvent` is `false`, the event object will not be delivered | `true`       | N       |
+  
   - `String` as `ModalId`
+  
+- `useModal` returns
+
+  | name                  | description                                                  | type           |
+  | --------------------- | ------------------------------------------------------------ | -------------- |
+  | `WrappedModalElement` | `WrappedModalElement` is a `ReactElement`, the element must be mounted in the component tree to be valid | `ReactElement` |
+  | `options.open`        | `open` current `modal` and pass initial `props` to it        | `Function`     |
+  | `options.close`       | `close` current `modal` which has been opened                | `Function`     |
+  | `options.closeAll`    | `close` all of `modals` which has been opened                | `Function`     |
+  | `options.update`      | `update` the `props` of `modal` which has been opened        | `Function`     |
+  | `options.loading`     | when some `LazyModal` is not loaded, and called `open` method , `loading` is `true`, until it loaded, `loading` will become to `false` | `boolean`      |
+
+  
 
 - `withModal` parameters
  ```typescript
@@ -126,7 +133,6 @@ export default () => {
     'modalId1': () => import('./path/to/modal1'),
     'modalId2': {
       loader: () => import('./path/to/modal2'),
-      displayName: 'ModalName',
     },
     'modalId3': {
       loader: () => import('./path/to/modal3'),
