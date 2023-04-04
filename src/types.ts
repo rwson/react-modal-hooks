@@ -17,7 +17,6 @@ export type Importer<T = any> = () => Promise<{
 
 export type LazyModalItem<T = any> = {
   loader: Importer;
-  displayName?: string;
   shouldComponentLoad?: (props: T) => boolean;
 };
 
@@ -42,7 +41,6 @@ export interface AddLazyModalParams {
   loaded?: boolean;
   loadFailed?: boolean;
   loader?: Importer;
-  displayName?: string;
   component?: ComponentType | any;
   props?: {
     [key: string]: any;
@@ -73,7 +71,6 @@ export type ModalItem<T = any> = {
   loaded?: boolean;
   loadFailed?: boolean;
   visible?: boolean;
-  displayName?: string;
   loader?: Importer;
   shouldComponentLoad?: (props: T) => boolean;
   component?: ComponentType | any;
@@ -98,7 +95,6 @@ export type Dispatcher = <
 
 export type UseModalParams<T> = {
   id: string;
-  displayName?: string;
   ignoreEvent?: boolean;
   keepAlive?: boolean;
   renderIfClosed?: boolean;

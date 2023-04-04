@@ -47,10 +47,12 @@ var reducer = /*#__PURE__*/produce(function (state, action) {
       return state;
 
     case ModalActionType.UpdateModal:
-      currentModal = Object.assign({}, action.payload, {
-        opened: true
-      });
-      state.set(payloadId, currentModal);
+      if (currentModal) {
+        currentModal.opened = true;
+        currentModal.props = payloadProps;
+        state.set(payloadId, currentModal);
+      }
+
       return state;
 
     case ModalActionType.CloseModal:
@@ -76,7 +78,6 @@ var reducer = /*#__PURE__*/produce(function (state, action) {
           loaded: false,
           isLazy: true,
           loadFailed: false,
-          displayName: action.payload.displayName,
           loader: loader,
           shouldComponentLoad: shouldComponentLoad
         });
@@ -938,7 +939,7 @@ var WrappedModalComponent = function WrappedModalComponent(_ref) {
       opened = _ref.opened,
       renderIfClosed = _ref.renderIfClosed;
 
-  if (!opened && !renderIfClosed) {
+  if (!opened && !renderIfClosed || !render) {
     return null;
   }
 
@@ -1054,7 +1055,7 @@ function useModal(params) {
               setLoading(false);
               dispatch(ModalActionType.OpenModal, {
                 id: id,
-                props: Object.assign({}, defaultProps, extraProps, propsRef.current)
+                props: Object.assign({}, defaultProps, extraProps, propsRef.current, openProps)
               });
 
             case 13:
@@ -1103,8 +1104,8 @@ function useModal(params) {
   }, [keepAlive, id, dispatch]);
   return [createElement(WrappedModalComponent, {
     modalProps: propsRef.current,
-    render: render,
     renderIfClosed: renderIfClosed,
+    render: render,
     opened: opened
   }), {
     loading: loading,
@@ -1225,7 +1226,6 @@ function withModals(Component) {
           var lazyModalItem = modals[key];
           dispatch(ModalActionType.AddLazyModal, {
             id: key,
-            displayName: lazyModalItem.displayName,
             shouldComponentLoad: lazyModalItem.shouldComponentLoad,
             loader: moduleLoader(lazyModalItem)
           });

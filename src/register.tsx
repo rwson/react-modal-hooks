@@ -70,7 +70,6 @@ export function withModals<T>(
 
         dispatch(ModalActionType.AddLazyModal, {
           id: key,
-          displayName: (lazyModalItem as LazyModalItem).displayName,
           shouldComponentLoad: (lazyModalItem as LazyModalItem).shouldComponentLoad,
           loader: moduleLoader(lazyModalItem)
         });

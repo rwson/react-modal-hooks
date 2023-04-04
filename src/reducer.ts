@@ -31,10 +31,11 @@ export const reducer = produce(
         return state;
 
       case ModalActionType.UpdateModal:
-        currentModal = Object.assign({}, action.payload, {
-          opened: true,
-        });
-        state.set(payloadId, currentModal as ModalItem);
+        if (currentModal) {
+          currentModal.opened = true;
+          currentModal.props = payloadProps;
+          state.set(payloadId, currentModal as ModalItem);
+        }
       return state;
 
 
@@ -60,7 +61,6 @@ export const reducer = produce(
             loaded: false,
             isLazy: true,
             loadFailed: false,
-            displayName: action.payload.displayName,
             loader,
             shouldComponentLoad
           } as ModalItem);

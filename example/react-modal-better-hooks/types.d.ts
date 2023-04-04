@@ -13,7 +13,6 @@ export declare type Importer<T = any> = () => Promise<{
 }>;
 export declare type LazyModalItem<T = any> = {
     loader: Importer;
-    displayName?: string;
     shouldComponentLoad?: (props: T) => boolean;
 };
 export declare type RegisterModalsParams<T = any> = {
@@ -34,7 +33,6 @@ export interface AddLazyModalParams {
     loaded?: boolean;
     loadFailed?: boolean;
     loader?: Importer;
-    displayName?: string;
     component?: ComponentType | any;
     props?: {
         [key: string]: any;
@@ -62,7 +60,6 @@ export declare type ModalItem<T = any> = {
     loaded?: boolean;
     loadFailed?: boolean;
     visible?: boolean;
-    displayName?: string;
     loader?: Importer;
     shouldComponentLoad?: (props: T) => boolean;
     component?: ComponentType | any;
@@ -77,7 +74,6 @@ export declare type ModalRenderProps<T> = {
 export declare type Dispatcher = <Type extends Actions['type'], Payload extends ActionsMap[Type]>(type: Type | any, ...payload: Payload extends undefined ? [undefined?] : [Payload] | any) => void;
 export declare type UseModalParams<T> = {
     id: string;
-    displayName?: string;
     ignoreEvent?: boolean;
     keepAlive?: boolean;
     renderIfClosed?: boolean;
