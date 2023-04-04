@@ -69,11 +69,16 @@ export default (props) => {
 ```jsx
 import { useModal } from 'react-modal-better-hooks'
 
+interface LazyModal1Props {
+   propkey1: string
+   propkey2: string
+}
+
 export default () => {
   const [ 
     LazyModal1Component, 
     { open: openLazyModal1 } 
-    ] = useModal({
+    ] = useModal<LazyModal1Props>({
       id: 'lazy-modal1-id'
     })
   const [ 
@@ -114,18 +119,16 @@ export default () => {
   
   - `String` as `ModalId`
   
-- `useModal` returns
+- `useModal` returns `[WrappedModalElement, options]`
 
-  | name                  | description                                                  | type           |
-  | --------------------- | ------------------------------------------------------------ | -------------- |
-  | `WrappedModalElement` | `WrappedModalElement` is a `ReactElement`, the element must be mounted in the component tree to be valid | `ReactElement` |
-  | `options.open`        | `open` current `modal` and pass initial `props` to it        | `Function`     |
-  | `options.close`       | `close` current `modal` which has been opened                | `Function`     |
-  | `options.closeAll`    | `close` all of `modals` which has been opened                | `Function`     |
-  | `options.update`      | `update` the `props` of `modal` which has been opened        | `Function`     |
-  | `options.loading`     | when some `LazyModal` is not loaded, and called `open` method , `loading` is `true`, until it loaded, `loading` will become to `false` | `boolean`      |
-
-  
+  | name                  | description                                                  | type                                     |
+  | --------------------- | ------------------------------------------------------------ | ---------------------------------------- |
+  | `WrappedModalElement` | `WrappedModalElement` is a `ReactElement`, the element must be mounted in the component tree to be valid | `ReactElement`                           |
+  | `options.open`        | `open` current `modal` and pass initial `props` to it        | `(props: T) => void `                    |
+  | `options.close`       | `close` current `modal` which has been opened                | `() => void`                             |
+  | `options.closeAll`    | `close` all of `modals` which has been opened                | `() => void`                             |
+  | `options.update`      | `update` the `props` of `modal` which has been opened        | `({ merge?: boolean, props: T }) => void` |
+  | `options.loading`     | when some `LazyModal` is not loaded, and called `open` method , `loading` is `true`, until it loaded, `loading` will become to `false` | `boolean`                                |
 
 - `withModal` parameters
  ```typescript
