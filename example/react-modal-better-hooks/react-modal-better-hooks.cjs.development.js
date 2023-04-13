@@ -1093,9 +1093,9 @@ function useModal(params) {
       props: Object.assign({}, defaultProps, propsRef.current)
     });
   }, [id, propsRef, modal]);
-  var close = React.useCallback(function () {
+  var close = React.useCallback(function (modalId) {
     dispatch(ModalActionType.CloseModal, {
-      id: id
+      id: modalId != null ? modalId : id
     });
   }, [id]);
   var closeAll = React.useCallback(function () {
@@ -1122,6 +1122,23 @@ function useModal(params) {
     close: close,
     closeAll: closeAll
   }];
+}
+function useCloseModal() {
+  var _useModalContext2 = useModalContext(),
+      dispatch = _useModalContext2.dispatch;
+
+  var close = React.useCallback(function (id) {
+    dispatch(ModalActionType.CloseModal, {
+      id: id
+    });
+  }, []);
+  var closeAll = React.useCallback(function () {
+    return dispatch(ModalActionType.CloseAllModals);
+  }, []);
+  return {
+    close: close,
+    closeAll: closeAll
+  };
 }
 
 function moduleLoader(importer) {
@@ -1258,6 +1275,7 @@ function withModals(Component) {
 produce.enableAllPlugins();
 
 exports.ModalProvider = ModalProvider;
+exports.useCloseModal = useCloseModal;
 exports.useModal = useModal;
 exports.withModals = withModals;
 //# sourceMappingURL=react-modal-better-hooks.cjs.development.js.map

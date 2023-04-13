@@ -5,17 +5,23 @@ import { useModalContext } from './context';
 import { ModalItem, ModalRenderProps, UseModalParams, UpdateModalParams, WrappedModalComponentProps } from './types';
 import { WrappedModalComponent } from './wrapped';
 
+interface UseModalCloseReturn {
+  close: (id: string) => void;
+  closeAll: () => void;
+}
+
+interface UseModalReturn<T> extends UseModalCloseReturn {
+  loading: boolean,
+  open: (props?: T) => void;
+  update: (params: UpdateModalParams<T>) => void;
+  close: (id?: string) => void;
+}
+
 export function useModal<T = any>(
   params: UseModalParams<T> | string
 ): [
   ReactElement,
-  {
-    loading: boolean,
-    open: (props?: T) => void;
-    update: (params: UpdateModalParams<T>) => void;
-    close: () => void;
-    closeAll: () => void;
-  }
+  UseModalReturn<T>
 ] {
   const [ loading, setLoading ] = useState<boolean>(false);
   const propsRef = useRef<any>({});
@@ -122,8 +128,8 @@ export function useModal<T = any>(
     });
   }, [id, propsRef, modal]);
 
-  const close = useCallback(() => {
-    dispatch(ModalActionType.CloseModal, { id });
+  const close = useCallback((modalId?: string) => {
+    dispatch(ModalActionType.CloseModal, { id: modalId ?? id });
   }, [id]);
 
   const closeAll = useCallback(() => dispatch(ModalActionType.CloseAllModals), []);
@@ -141,7 +147,7 @@ export function useModal<T = any>(
   return [
     createElement(WrappedModalComponent, {
       modalProps: propsRef.current,
-      renderIfClosed: renderIfClosed,
+      renderIfClosed,
       render,
       opened
     }),
@@ -153,4 +159,19 @@ export function useModal<T = any>(
       closeAll,
     }
   ];
+}
+
+export function useCloseModal(): UseModalCloseReturn {
+  const { dispatch, state, defaultProps } = useModalContext();
+
+  const close = useCallback((id: string) => {
+    dispatch(ModalActionType.CloseModal, { id });
+  }, []);
+
+  const closeAll = useCallback(() => dispatch(ModalActionType.CloseAllModals), []);
+
+  return {
+    close,
+    closeAll
+  };
 }

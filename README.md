@@ -67,7 +67,7 @@ export default (props) => {
 
 - Use Modals in your page/component scope
 ```jsx
-import { useModal } from 'react-modal-better-hooks'
+import { useModal, useCloseModal } from 'react-modal-better-hooks'
 
 interface LazyModal1Props {
    propkey1: string
@@ -75,23 +75,29 @@ interface LazyModal1Props {
 }
 
 export default () => {
+  const { close, closeAll } = useCloseModal()
+  
   const [ 
     LazyModal1Component, 
-    { open: openLazyModal1 } 
+    { open: openLazyModal1, , close: closeLazyModal1, closeAll: closeAllModals } 
     ] = useModal<LazyModal1Props>({
       id: 'lazy-modal1-id'
     })
   const [ 
     Modal1Component, 
-    { open: openModal1, close, closeAll } 
+    { open: openModal1 } 
     ] = useModal({
       id: 'modal1-id',
-      render: (props) => <Modal1 {...props} onCancel={close} closeAll={closeAll} />
+      render: (props) => <Modal1 {...props} onCancel={() => close('modal1-id')} closeAll={closeAll} />
     })
   
   return (
      <div>
        <Button onClick={() => openModal1({
+         propkey1: 'propkey1',
+         propkey2: 'propkey2'
+       })}></Button>
+       <Button onClick={() => openLazyModal1({
          propkey1: 'propkey1',
          propkey2: 'propkey2'
        })}></Button>
@@ -102,8 +108,8 @@ export default () => {
 }
 ```
 
-
 ### API
+
 
 - `useModal` parameters
 
@@ -129,6 +135,8 @@ export default () => {
   | `options.closeAll`    | `close` all of `modals` which has been opened                | `() => void`                             |
   | `options.update`      | `update` the `props` of `modal` which has been opened        | `({ merge?: boolean, props: T }) => void` |
   | `options.loading`     | when some `LazyModal` is not loaded, and called `open` method , `loading` is `true`, until it loaded, `loading` will become to `false` | `boolean`                                |
+
+- `useCloseModal` returns `{ close: (modalId: string) => void, closeAll: () => void }`
 
 - `withModal` parameters
  ```typescript
