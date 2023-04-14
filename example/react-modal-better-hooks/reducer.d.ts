@@ -1,15 +1,15 @@
+/// <reference types="react" />
 import { Importer, Actions, ModalStateMap } from './types';
 export declare const initialState: Map<any, any>;
 export declare const reducer: (base: ReadonlyMap<string, {
     readonly id: string;
-    readonly opened: boolean;
+    readonly visible?: boolean | undefined;
     readonly isLazy?: boolean | undefined;
     readonly loaded?: boolean | undefined;
+    readonly loading?: boolean | undefined;
     readonly loadFailed?: boolean | undefined;
-    readonly visible?: boolean | undefined;
     readonly loader?: Importer<any> | undefined;
-    readonly shouldComponentLoad?: ((props: any) => boolean) | undefined;
-    readonly component?: any;
+    readonly component?: import("react").ComponentClass<{}, any> | import("react").FunctionComponent<{}> | undefined;
     readonly props?: {
         readonly [x: string]: any;
     } | undefined;

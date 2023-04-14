@@ -1,9 +1,13 @@
-import { enableAllPlugins } from 'immer';
+import { enableAllPlugins } from 'immer'
 
-enableAllPlugins();
+enableAllPlugins()
 
-export { ModalProvider } from './context';
-export { useModal, useCloseModal } from './hooks';
-export { withModals } from './register';
+export { ModalProvider } from './context'
+// export { withModals } from './register'
 
-export { ModalBasicProps } from './types';
+export { useOpenModal } from './hooks/useOpenModal'
+export { useCloseModal } from './hooks/useCloseModal'
+export { useUpdateModal } from './hooks/useUpdateModal'
+export { useRegisterModal } from './hooks/useRegisterModal'
+
+export { ModalBasicProps } from './types'

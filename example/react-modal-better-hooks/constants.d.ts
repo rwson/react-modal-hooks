@@ -4,6 +4,7 @@ export declare enum ModalActionType {
     CloseModal = "CloseModal",
     CloseAllModals = "CloseAllModals",
     RemoveModal = "RemoveModal",
-    AddLazyModal = "AddLazyModal",
-    LazyModalLoaded = "LazyModalLoaded"
+    RegisterModal = "RegisterModal",
+    LazyModalLoaded = "LazyModalLoaded",
+    LoadLazyModal = "LoadLazyModal"
 }

@@ -1,22 +1,10 @@
 import { ComponentType, PropsWithChildren } from 'react';
 import { ModalActionType } from './constants';
-export declare type WrappedModalComponentProps = {
-    renderIfClosed?: boolean;
-    opened: boolean;
-    render: (props: any) => any;
-    modalProps: {
-        [key: string]: any;
-    };
-};
 export declare type Importer<T = any> = () => Promise<{
     default: ComponentType<PropsWithChildren<T>>;
 }>;
-export declare type LazyModalItem<T = any> = {
-    loader: Importer;
-    shouldComponentLoad?: (props: T) => boolean;
-};
 export declare type RegisterModalsParams<T = any> = {
-    [key: string]: Importer | LazyModalItem<T>;
+    [key: string]: Importer;
 };
 export interface CloseModalParams {
     id: string;
@@ -40,12 +28,13 @@ export interface AddLazyModalParams {
 }
 export declare type ActionsMap = {
     [ModalActionType.OpenModal]: OpenModalParams;
-    [ModalActionType.AddLazyModal]: AddLazyModalParams;
+    [ModalActionType.RegisterModal]: AddLazyModalParams;
+    [ModalActionType.LoadLazyModal]: any;
     [ModalActionType.LazyModalLoaded]: AddLazyModalParams;
     [ModalActionType.CloseModal]: CloseModalParams;
     [ModalActionType.RemoveModal]: CloseModalParams;
     [ModalActionType.UpdateModal]: any;
-    [ModalActionType.CloseAllModals]: any;
+    [ModalActionType.CloseAllModals]: void;
 };
 export declare type Actions = {
     [Key in keyof ActionsMap]: {
@@ -55,14 +44,14 @@ export declare type Actions = {
 }[keyof ActionsMap];
 export declare type ModalItem<T = any> = {
     id: string;
-    opened: boolean;
+    visible: boolean;
     isLazy?: boolean;
     loaded?: boolean;
+    loading?: boolean;
     loadFailed?: boolean;
     visible?: boolean;
     loader?: Importer;
-    shouldComponentLoad?: (props: T) => boolean;
-    component?: ComponentType | any;
+    component?: ComponentType;
     props?: {
         [key: string]: any;
     };
@@ -87,4 +76,7 @@ export declare type ModalBasicProps<T> = {
     [K in keyof T]: T[K];
 } & {
     visible: boolean;
+};
+export declare type ModalProviderProps = {
+    mountNode?: string;
 };

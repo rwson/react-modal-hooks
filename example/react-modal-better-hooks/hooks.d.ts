@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import { UseModalParams, UpdateModalParams } from './types';
 interface UseModalCloseReturn {
     close: (id: string) => void;
@@ -10,6 +9,6 @@ interface UseModalReturn<T> extends UseModalCloseReturn {
     update: (params: UpdateModalParams<T>) => void;
     close: (id?: string) => void;
 }
-export declare function useModal<T = any>(params: UseModalParams<T> | string): [ReactElement, UseModalReturn<T>];
+export declare function useModal<T = any>(params: UseModalParams<T> | string): [null, UseModalReturn<T>];
 export declare function useCloseModal(): UseModalCloseReturn;
 export {};

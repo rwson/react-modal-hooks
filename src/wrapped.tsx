@@ -1,6 +1,6 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement } from 'react'
 
-import { WrappedModalComponentProps } from './types';
+import { WrappedModalComponentProps } from './types'
 
 export const WrappedModalComponent: FC<WrappedModalComponentProps> = ({
   render,
@@ -9,8 +9,8 @@ export const WrappedModalComponent: FC<WrappedModalComponentProps> = ({
   renderIfClosed
 }: WrappedModalComponentProps): ReactElement | null => {
   if ((!opened && !renderIfClosed) || !render) {
-    return null;
+    return null
   }
 
-  return <>{render(modalProps)}</>;
-};
+  return <>{render(modalProps)}</>
+}

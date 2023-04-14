@@ -3,23 +3,23 @@ import React, {
   useEffect,
   useCallback,
   PropsWithChildren,
-} from 'react';
+} from 'react'
 
-import { ModalActionType } from './constants';
-import { useModalContext } from './context';
-import { Importer, LazyModalItem, RegisterModalsParams, ModalItem } from './types';
+import { ModalActionType } from './constants'
+import { useModalContext } from './context'
+import { Importer, LazyModalItem, RegisterModalsParams, ModalItem } from './types'
 
 function moduleLoader(importer: Importer | LazyModalItem) {
   return async () => {
-    let loader: any;
+    let loader: any
     if (typeof importer === 'function') {
-      loader = importer;
+      loader = importer
     } else {
-      loader = importer.loader;
+      loader = importer.loader
     }
 
-    const module = await loader();
-    return module;
+    const module = await loader()
+    return module
   }
 }
 
@@ -27,43 +27,43 @@ export function withModals<T>(
   Component: ComponentType<PropsWithChildren<T>>
 ) {
   return (modals: RegisterModalsParams<T>) => (props: T) => {
-    const { dispatch, state } = useModalContext();
+    const { dispatch, state } = useModalContext()
 
     const loadModal = useCallback(
       async (id: string) => {
-        const modal = state.get(id) as ModalItem;
+        const modal = state.get(id) as ModalItem
 
         if (modal) {
           if (modal.shouldComponentLoad && !modal.shouldComponentLoad?.(props)) {
-            return;
+            return
           }
 
           try {
             //  When unload modal and module load failed, try reload module
             if (!modal.loaded || modal.loadFailed) {
-              const module = await modal.loader?.();
+              const module = await modal.loader?.()
 
               dispatch(ModalActionType.LazyModalLoaded, {
                 loaded: true,
                 loadFailed: false,
                 component: module?.default,
                 id,
-              });
+              })
             }
           } catch (e) {
             dispatch(ModalActionType.LazyModalLoaded, {
               loaded: false,
               loadFailed: true,
               id,
-            });
+            })
           }
         }
       },
       [state]
-    );
+    )
 
     const addModalsToState = useCallback(() => {
-      const keys: string[] = Object.keys(modals);
+      const keys: string[] = Object.keys(modals)
 
       for (const key of keys) {
         const lazyModalItem: Importer | LazyModalItem = modals[key]
@@ -72,22 +72,22 @@ export function withModals<T>(
           id: key,
           shouldComponentLoad: (lazyModalItem as LazyModalItem).shouldComponentLoad,
           loader: moduleLoader(lazyModalItem)
-        });
+        })
       }
-    }, [modals]);
+    }, [modals])
 
     useEffect(() => {
-      addModalsToState();
-    }, [modals]);
+      addModalsToState()
+    }, [modals])
 
     useEffect(() => {
-      const keys: Array<string> = Array.from(state.keys());
+      const keys: Array<string> = Array.from(state.keys())
 
       for (const key of keys) {
-        loadModal(key);
+        loadModal(key)
       }
-    }, [state]);
+    }, [state])
 
-    return <Component {...props} />;
-  };
+    return <Component {...props} />
+  }
 }
