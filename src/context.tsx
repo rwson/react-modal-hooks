@@ -15,8 +15,7 @@ import {
   ModalStateMap,
   Actions,
   ActionsMap,
-  Dispatcher,
-  ModalProviderProps
+  Dispatcher
 } from './types'
 
 import { ModalAutoMounter } from './components/ModalAutoMounter'
@@ -24,7 +23,7 @@ import { ModalAutoMounter } from './components/ModalAutoMounter'
 const ModalContext = createContext<{
   state: ModalStateMap
   dispatch: Dispatcher
-  defaultProps: ModalProviderProps
+  defaultProps: Record<string, any>
 }>({
   state: initialState,
   dispatch: () => undefined,
@@ -33,9 +32,7 @@ const ModalContext = createContext<{
 
 ModalContext.displayName = 'RMBH_Context'
 
-export const ModalProvider: FC<PropsWithChildren<{
-  defaultProps: ModalProviderProps
-}>> = ({ children, defaultProps = {} }) => {
+export const ModalProvider: FC<PropsWithChildren<any>> = ({ children, defaultProps = {} }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   //  @ts-ignore
@@ -62,5 +59,5 @@ export const ModalProvider: FC<PropsWithChildren<{
 export const useModalContext = (): {
   state: ModalStateMap
   dispatch: Dispatcher
-  defaultProps: ModalProviderProps
+  defaultProps: Record<string, any>
 } => useContext(ModalContext)

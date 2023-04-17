@@ -1,5 +1,5 @@
 interface UseCloseModalReutrn {
-    closeModal(modalId: string): void;
+    closeModal(id: string): void;
     closeAllModals(): void;
 }
 export declare const useCloseModal: () => UseCloseModalReutrn;

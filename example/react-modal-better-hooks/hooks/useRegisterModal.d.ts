@@ -6,6 +6,6 @@ interface ModalRegisterItem {
     readonly loader?: Importer;
 }
 declare type RegisterModalInput = Record<string, ModalRegisterItem>;
-declare type UseRegisterModalReturn = (modals: RegisterModalInput) => void;
+declare type UseRegisterModalReturn = (modals: RegisterModalInput, isGlobal?: boolean) => void;
 export declare const useRegisterModal: () => UseRegisterModalReturn;
 export {};

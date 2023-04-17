@@ -1,4 +1,4 @@
-import React, { ComponentType, useEffect, useMemo } from 'react'
+import React, { ComponentType, useEffect, useMemo, useRef } from 'react'
 
 import { useModalContext } from '../context'
 import { Importer } from '../types'
@@ -12,11 +12,12 @@ interface ModalRegisterItem {
 
 type RegisterModalInput = Record<string, ModalRegisterItem>
 
-type UseRegisterModalReturn = (modals: RegisterModalInput) => void
+type UseRegisterModalReturn = (modals: RegisterModalInput, isGlobal?: boolean) => void
 
 export const useRegisterModal = (): UseRegisterModalReturn => {
-  const register = (modals: RegisterModalInput): void => {
+  const register = (modals: RegisterModalInput, isGlobal?: boolean): void => {
     const { dispatch, state } = useModalContext()
+    const mountRef = useRef<boolean>(false)
 
     const diffModals = useMemo(() => {
       return Object.keys(modals).reduce((result: RegisterModalInput, modalId: string) => {
@@ -51,6 +52,20 @@ export const useRegisterModal = (): UseRegisterModalReturn => {
         dispatch(ModalActionType.RegisterModal, modalItem)
       })
     }, [diffModals])
+
+    useEffect(() => {
+      if (!mountRef.current) {
+        mountRef.current = true
+      }
+
+      return () => {
+        if (!isGlobal && mountRef.current) {
+          Object.keys(modals).forEach((id) => {
+            dispatch(ModalActionType.RemoveModal, { id })
+          })
+        }
+      }
+    }, [modals, isGlobal])
   }
 
   return register

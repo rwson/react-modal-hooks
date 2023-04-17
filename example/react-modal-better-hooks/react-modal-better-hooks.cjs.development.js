@@ -121,10 +121,11 @@ var reducer = /*#__PURE__*/produce__default(function (state, action) {
       return state;
 
     case ModalActionType.CloseModal:
+      console.log(action.type, currentModal);
+
       if (currentModal) {
         currentModal.visible = false;
         state.set(payloadId, currentModal);
-        console.log(currentModal);
       }
 
       return state;
@@ -145,6 +146,10 @@ var reducer = /*#__PURE__*/produce__default(function (state, action) {
         }));
       }
 
+      return state;
+
+    case ModalActionType.RemoveModal:
+      state["delete"](payloadId);
       return state;
 
     case ModalActionType.LoadLazyModal:
@@ -189,7 +194,8 @@ var WrappedModal = function WrappedModal(_ref) {
 var ModalAutoMounter = function ModalAutoMounter() {
   var _useModalContext = useModalContext(),
       state = _useModalContext.state,
-      dispatch = _useModalContext.dispatch;
+      dispatch = _useModalContext.dispatch,
+      defaultProps = _useModalContext.defaultProps;
 
   var mountableCompnent = React.useMemo(function () {
     var entries = state.values();
@@ -199,12 +205,12 @@ var ModalAutoMounter = function ModalAutoMounter() {
       var entry = _step.value;
 
       if (entry.component) {
-        components.push(React.createElement(WrappedModal, {
+        components.push(React.createElement(WrappedModal, _extends({}, defaultProps || {}, {
           render: entry.component,
           renderProps: entry.props,
           visible: entry.visible,
           key: entry.id
-        }));
+        })));
       }
     }
 
@@ -220,18 +226,15 @@ var ModalAutoMounter = function ModalAutoMounter() {
         dispatch(ModalActionType.LoadLazyModal, {
           id: entry.id
         });
-
-        try {
-          var loader = entry.loader;
-          loader == null ? void 0 : loader().then(function (instance) {
-            dispatch(ModalActionType.LazyModalLoaded, {
-              id: entry.id,
-              component: instance["default"],
-              loadFailed: false,
-              loaded: true
-            });
+        var loader = entry.loader;
+        loader == null ? void 0 : loader().then(function (instance) {
+          dispatch(ModalActionType.LazyModalLoaded, {
+            id: entry.id,
+            component: instance["default"],
+            loadFailed: false,
+            loaded: true
           });
-        } catch (err) {}
+        });
       }
     };
 
@@ -292,6 +295,24 @@ var useOpenModal = function useOpenModal() {
     var modalItem = state.get(modalId);
 
     if (modalItem != null && modalItem.isLazy && !(modalItem != null && modalItem.loaded) && !modalItem.loading) {
+      var loader = modalItem.loader;
+      dispatch(ModalActionType.LoadLazyModal, {
+        id: modalId
+      });
+      loader == null ? void 0 : loader().then(function (instance) {
+        dispatch(ModalActionType.LazyModalLoaded, {
+          id: modalItem.id,
+          component: instance["default"],
+          loadFailed: false,
+          loaded: true
+        });
+        setTimeout(function () {
+          dispatch(ModalActionType.OpenModal, {
+            id: modalId,
+            props: props
+          });
+        }, 30);
+      });
       return;
     }
 
@@ -308,9 +329,9 @@ var useCloseModal = function useCloseModal() {
   var _useModalContext = useModalContext(),
       dispatch = _useModalContext.dispatch;
 
-  var closeModal = function closeModal(modalId) {
+  var closeModal = function closeModal(id) {
     return dispatch(ModalActionType.CloseModal, {
-      modalId: modalId
+      id: id
     });
   };
 
@@ -343,12 +364,33 @@ var useUpdateModal = function useUpdateModal() {
   return update;
 };
 
+var useModalIsLoading = function useModalIsLoading(modalIds) {
+  var _useModalContext = useModalContext(),
+      state = _useModalContext.state;
+
+  return React.useMemo(function () {
+    var ids = Array.isArray(modalIds) ? modalIds : [modalIds];
+    var modals = ids.map(function (id) {
+      return state.get(id);
+    }).filter(Boolean);
+
+    if (!modals.length) {
+      return false;
+    }
+
+    return modals.some(function (modal) {
+      return modal != null && modal.isLazy ? modal.loading : false;
+    });
+  }, [state, modalIds]);
+};
+
 var useRegisterModal = function useRegisterModal() {
-  var register = function register(modals) {
+  var register = function register(modals, isGlobal) {
     var _useModalContext = useModalContext(),
         dispatch = _useModalContext.dispatch,
         state = _useModalContext.state;
 
+    var mountRef = React.useRef(false);
     var diffModals = React.useMemo(function () {
       return Object.keys(modals).reduce(function (result, modalId) {
         var _extends2;
@@ -379,6 +421,21 @@ var useRegisterModal = function useRegisterModal() {
         dispatch(ModalActionType.RegisterModal, modalItem);
       });
     }, [diffModals]);
+    React.useEffect(function () {
+      if (!mountRef.current) {
+        mountRef.current = true;
+      }
+
+      return function () {
+        if (!isGlobal && mountRef.current) {
+          Object.keys(modals).forEach(function (id) {
+            dispatch(ModalActionType.RemoveModal, {
+              id: id
+            });
+          });
+        }
+      };
+    }, [modals, isGlobal]);
   };
 
   return register;
@@ -388,6 +445,7 @@ produce.enableAllPlugins();
 
 exports.ModalProvider = ModalProvider;
 exports.useCloseModal = useCloseModal;
+exports.useModalIsLoading = useModalIsLoading;
 exports.useOpenModal = useOpenModal;
 exports.useRegisterModal = useRegisterModal;
 exports.useUpdateModal = useUpdateModal;

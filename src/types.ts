@@ -6,16 +6,20 @@ export type Importer<T = any> = () => Promise<{
   default: ComponentType<PropsWithChildren<T>>
 }>
 
-export type RegisterModalsParams<T = any> = {
-  [key: string]: Importer
-}
-
 export interface CloseModalParams {
   id: string
 }
 
 export interface OpenModalParams {
   id: string
+  props?: {
+    [key: string]: any
+  }
+}
+
+export interface UpdateModalParams {
+  id: string
+  merge?: boolean
   props?: {
     [key: string]: any
   }
@@ -40,8 +44,8 @@ export type ActionsMap = {
   [ModalActionType.LazyModalLoaded]: AddLazyModalParams
   [ModalActionType.CloseModal]: CloseModalParams
   [ModalActionType.RemoveModal]: CloseModalParams
-  [ModalActionType.UpdateModal]: any
-  [ModalActionType.CloseAllModals]: void
+  [ModalActionType.UpdateModal]: UpdateModalParams
+  [ModalActionType.CloseAllModals]: any
 }
 
 export type Actions = {
@@ -77,20 +81,8 @@ export type Dispatcher = <
   ...payload: Payload extends undefined ? [undefined?] : [Payload] | any
 ) => void
 
-export type UseModalParams<T> = {
-  id: string
-  ignoreEvent?: boolean
-  keepAlive?: boolean
-  renderIfClosed?: boolean
-  render?: (props: ModalBasicProps<T>) => any
-}
-
 export type ModalBasicProps<T> = {
   [K in keyof T]: T[K]
 } & {
   visible: boolean
-}
-
-export type ModalProviderProps = {
-  mountNode?: string
 }

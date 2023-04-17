@@ -6,7 +6,7 @@ import { ModalActionType } from '../constants'
 import { WrappedModal } from './WrappedModal'
 
 export const ModalAutoMounter: FC = () => {
-  const { state, dispatch } = useModalContext()
+  const { state, dispatch, defaultProps } = useModalContext()
   const mountableCompnent = useMemo(() => {
     const entries: IterableIterator<ModalItem> = state.values()
     const components: ReactElement[] = []
@@ -14,6 +14,7 @@ export const ModalAutoMounter: FC = () => {
     for (const entry of entries) {
       if (entry.component) {
         components.push(createElement(WrappedModal, {
+          ...(defaultProps || {}),
           render: entry.component,
           renderProps: entry.props,
           visible: entry.visible,
@@ -34,20 +35,15 @@ export const ModalAutoMounter: FC = () => {
           id: entry.id
         })
 
-        try {
-          const loader = entry.loader
-          loader?.().then((instance) => {
-            dispatch(ModalActionType.LazyModalLoaded, {
-              id: entry.id,
-              component: instance.default,
-              loadFailed: false,
-              loaded: true
-            })
+        const loader = entry.loader
+        loader?.().then((instance) => {
+          dispatch(ModalActionType.LazyModalLoaded, {
+            id: entry.id,
+            component: instance.default,
+            loadFailed: false,
+            loaded: true
           })
-
-        } catch (err) {
-
-        }
+        })
       }
     }
   }, [state])

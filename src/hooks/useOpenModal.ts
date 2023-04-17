@@ -20,6 +20,26 @@ export const useOpenModal = <T>(): UseOpenModalReturn<T> => {
     const modalItem = state.get(modalId)
 
     if (modalItem?.isLazy && !modalItem?.loaded && !modalItem.loading) {
+      const loader = modalItem.loader
+      dispatch(ModalActionType.LoadLazyModal, {
+        id: modalId
+      })
+
+      loader?.().then((instance) => {
+        dispatch(ModalActionType.LazyModalLoaded, {
+          id: modalItem.id,
+          component: instance.default,
+          loadFailed: false,
+          loaded: true
+        })
+
+        setTimeout(() => {
+          dispatch(ModalActionType.OpenModal, {
+            id: modalId,
+            props
+          })
+        }, 30)
+      })
       return
     }
 

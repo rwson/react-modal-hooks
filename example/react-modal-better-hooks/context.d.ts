@@ -1,10 +1,8 @@
 import { FC, PropsWithChildren } from 'react';
-import { ModalStateMap, Dispatcher, ModalProviderProps } from './types';
-export declare const ModalProvider: FC<PropsWithChildren<{
-    defaultProps: ModalProviderProps;
-}>>;
+import { ModalStateMap, Dispatcher } from './types';
+export declare const ModalProvider: FC<PropsWithChildren<any>>;
 export declare const useModalContext: () => {
     state: ModalStateMap;
     dispatch: Dispatcher;
-    defaultProps: ModalProviderProps;
+    defaultProps: Record<string, any>;
 };

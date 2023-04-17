@@ -3,7 +3,6 @@ export enum ModalActionType {
   UpdateModal = 'UpdateModal',
   CloseModal = 'CloseModal',
   CloseAllModals = 'CloseAllModals',
-
   RemoveModal = 'RemoveModal',
   RegisterModal = 'RegisterModal',
   LazyModalLoaded = 'LazyModalLoaded',

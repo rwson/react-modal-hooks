@@ -2,7 +2,7 @@ import { ComponentType } from 'react'
 import produce from 'immer'
 
 import { ModalActionType } from './constants'
-import { Importer, CloseModalParams, OpenModalParams, AddLazyModalParams, ActionsMap, Actions, ModalItem, ModalStateMap } from './types'
+import { Importer, ActionsMap, Actions, ModalItem, ModalStateMap } from './types'
 
 export const initialState = new Map()
 
@@ -37,11 +37,11 @@ export const reducer = produce(
       return state
 
       case ModalActionType.CloseModal:
+        console.log(action.type, currentModal)
+
         if (currentModal) {
           currentModal.visible = false
           state.set(payloadId, currentModal)
-
-          console.log(currentModal)
         }
         return state
 
@@ -61,6 +61,10 @@ export const reducer = produce(
             props: {}
           } as ModalItem)
         }
+        return state
+
+      case ModalActionType.RemoveModal:
+        state.delete(payloadId)
         return state
 
       case ModalActionType.LoadLazyModal:
