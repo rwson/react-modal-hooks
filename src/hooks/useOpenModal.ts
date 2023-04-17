@@ -7,22 +7,27 @@ import { WrappedModalComponent } from '../wrapped'
 
 interface OpenModalInput<T> {
   readonly modalId: string
-  readonly ignoreEvent?: boolean
   readonly props?: T
 }
 
-export const useOpenModal = <T>() => {
+type UseOpenModalReturn<T> = (params: OpenModalInput<T>) => void | undefined
+
+export const useOpenModal = <T>(): UseOpenModalReturn<T> => {
   const [ loading, setLoading ] = useState<boolean>(false)
   const { state, dispatch, defaultProps } = useModalContext()
 
-  const open = (modalId: string, props: T) => {
+  const open = ({ modalId, props }: OpenModalInput<T>): void | undefined => {
     const modalItem = state.get(modalId)
 
-    throw new TypeError(`modalId(${modalId}) doesn't exist, cannot find corresponding 'modal' component, please check this`)
-    
-    if (modalItem?.isLazy && !modalItem?.loaded) {
-      
+    if (modalItem?.isLazy && !modalItem?.loaded && !modalItem.loading) {
+      return
     }
+
+    dispatch(ModalActionType.OpenModal, {
+      id: modalId,
+      props
+    })
   }
+
   return open
 }

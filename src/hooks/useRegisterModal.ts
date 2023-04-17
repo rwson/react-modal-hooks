@@ -1,4 +1,4 @@
-import React, { ComponentType, useEffect } from 'react'
+import React, { ComponentType, useEffect, useMemo } from 'react'
 
 import { useModalContext } from '../context'
 import { Importer } from '../types'
@@ -12,13 +12,28 @@ interface ModalRegisterItem {
 
 type RegisterModalInput = Record<string, ModalRegisterItem>
 
-export const useRegisterModal = () => {
-  const register = (modals: RegisterModalInput) => {
+type UseRegisterModalReturn = (modals: RegisterModalInput) => void
+
+export const useRegisterModal = (): UseRegisterModalReturn => {
+  const register = (modals: RegisterModalInput): void => {
     const { dispatch, state } = useModalContext()
 
+    const diffModals = useMemo(() => {
+      return Object.keys(modals).reduce((result: RegisterModalInput, modalId: string) => {
+        if (state.get(modalId)) {
+          return result
+        }
+        
+        return {
+          ...result,
+          [modalId]: modals[modalId]
+        }
+      }, {})
+    }, [modals, state])
+
     useEffect(() => {
-      Object.keys(modals).forEach((modalId: string) => {
-        const registerItem = modals[modalId]
+      Object.keys(diffModals).forEach((modalId: string) => {
+        const registerItem = diffModals[modalId]
 
         const modalItem: Record<string, any> = {
           id: modalId,
@@ -35,7 +50,7 @@ export const useRegisterModal = () => {
 
         dispatch(ModalActionType.RegisterModal, modalItem)
       })
-    }, [modals, state])
+    }, [diffModals])
   }
 
   return register

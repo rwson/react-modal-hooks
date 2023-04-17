@@ -19,7 +19,7 @@ import {
   ModalProviderProps
 } from './types'
 
-import { Mounter } from './mounter'
+import { ModalAutoMounter } from './components/ModalAutoMounter'
 
 const ModalContext = createContext<{
   state: ModalStateMap
@@ -52,7 +52,7 @@ export const ModalProvider: FC<PropsWithChildren<{
   return (
     <ModalContext.Provider value={value}>
       <>
-        <Mounter />
+        <ModalAutoMounter />
         {children}
       </>
     </ModalContext.Provider>

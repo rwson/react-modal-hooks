@@ -58,12 +58,9 @@ export type ModalItem = {
   loaded?: boolean
   loading?: boolean
   loadFailed?: boolean
-  visible?: boolean
   loader?: Importer
   component?: ComponentType
-  props?: {
-    [key: string]: any
-  }
+  props?: Record<string, any>
 }
 
 export type ModalStateMap = Map<string, ModalItem>
@@ -86,11 +83,6 @@ export type UseModalParams<T> = {
   keepAlive?: boolean
   renderIfClosed?: boolean
   render?: (props: ModalBasicProps<T>) => any
-}
-
-export type UpdateModalParams<T> = {
-  merge?: boolean
-  props: Partial<T>
 }
 
 export type ModalBasicProps<T> = {

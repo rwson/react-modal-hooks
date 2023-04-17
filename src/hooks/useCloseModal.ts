@@ -1,14 +1,19 @@
 import { ModalActionType } from '../constants'
 import { useModalContext } from '../context'
 
-export const useCloseModal = () => {
+interface UseCloseModalReutrn {
+  closeModal(modalId: string): void
+  closeAllModals(): void
+}
+
+export const useCloseModal = (): UseCloseModalReutrn => {
   const { dispatch } = useModalContext()
 
-  const close = (modalId: string) => dispatch(ModalActionType.CloseModal, { modalId })
-  const closeAll = () => dispatch(ModalActionType.CloseAllModals)
+  const closeModal = (modalId: string) => dispatch(ModalActionType.CloseModal, { modalId })
+  const closeAllModals = () => dispatch(ModalActionType.CloseAllModals)
 
   return {
-    close,
-    closeAll
+    closeModal,
+    closeAllModals
   }
 }

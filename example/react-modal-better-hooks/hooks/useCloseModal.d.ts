@@ -1,4 +1,6 @@
-export declare const useCloseModal: () => {
-    close: (modalId: string) => void;
-    closeAll: () => void;
-};
+interface UseCloseModalReutrn {
+    closeModal(modalId: string): void;
+    closeAllModals(): void;
+}
+export declare const useCloseModal: () => UseCloseModalReutrn;
+export {};

@@ -8,51 +8,50 @@ export const initialState = new Map()
 
 export const reducer = produce(
   (state: ModalStateMap, action: Actions): ModalStateMap => {
-    const { id: payloadId, props: payloadProps, loader, component, loadFailed, shouldComponentLoad, loaded } = action.payload ?? {}
+    const { id: payloadId, props: payloadProps, loader, component, loadFailed, shouldComponentLoad, loaded, __mergeProps___ } = action.payload ?? {}
     const allKeys: Array<string> = Array.from(state.keys())
     const registed: boolean = state.has(payloadId)
 
     let currentModal: ModalItem | undefined = state.get(payloadId)
 
     switch (action.type) {
-      // case ModalActionType.OpenModal:
-      //   if (registed) {
-      //     if (currentModal) {
-      //       currentModal.opened = true
-      //       currentModal.props = payloadProps
-      //     }
-      //   } else {
-      //     currentModal = Object.assign({}, action.payload, {
-      //       opened: true,
-      //     })
-      //   }
+      case ModalActionType.OpenModal:
+        if (currentModal) {
+          currentModal.visible = true
+          currentModal.props = Object.assign({}, payloadProps ?? {})
 
-      //   state.set(payloadId, currentModal as ModalItem)
-      //   return state
+          state.set(payloadId, currentModal as ModalItem)
+        }
 
-      // case ModalActionType.UpdateModal:
-      //   if (currentModal) {
-      //     currentModal.opened = true
-      //     currentModal.props = payloadProps
-      //     state.set(payloadId, currentModal as ModalItem)
-      //   }
-      // return state
+        return state
 
+      case ModalActionType.UpdateModal:
+        if (currentModal) {
+          let oldPorps = {}
+          if (__mergeProps___) {
+            oldPorps = currentModal.props ?? {}
+          }
+          currentModal.props = Object.assign({}, oldPorps, payloadProps ?? {})
+          state.set(payloadId, currentModal as ModalItem)
+        }
+      return state
 
-      // case ModalActionType.CloseModal:
-      //   if (currentModal) {
-      //     currentModal.opened = false
-      //     state.set(payloadId, currentModal)
-      //   }
-      //   return state
+      case ModalActionType.CloseModal:
+        if (currentModal) {
+          currentModal.visible = false
+          state.set(payloadId, currentModal)
 
-      // case ModalActionType.CloseAllModals:
-      //   allKeys.forEach((key: string) => {
-      //     currentModal = state.get(key) as ModalItem
-      //     currentModal.opened = false
-      //     state.set(key, currentModal)
-      //   })
-      //   return state
+          console.log(currentModal)
+        }
+        return state
+
+      case ModalActionType.CloseAllModals:
+        allKeys.forEach((key: string) => {
+          currentModal = state.get(key) as ModalItem
+          currentModal.visible = false
+          state.set(key, currentModal)
+        })
+        return state
 
       case ModalActionType.RegisterModal:
         if (!registed) {
@@ -71,15 +70,15 @@ export const reducer = produce(
         }
         return state
 
-      // case ModalActionType.LazyModalLoaded:
-      //   if (currentModal) {
-      //     currentModal.loaded = loaded
-      //     currentModal.loadFailed = loadFailed
-      //     currentModal.loading = false
-      //     currentModal.component = component
-      //     state.set(payloadId, currentModal as ModalItem)
-      //   }
-      //   return state
+      case ModalActionType.LazyModalLoaded:
+        if (currentModal) {
+          currentModal.loaded = loaded
+          currentModal.loadFailed = loadFailed
+          currentModal.loading = false
+          currentModal.component = component
+          state.set(payloadId, currentModal as ModalItem)
+        }
+        return state
 
       default:
         return state

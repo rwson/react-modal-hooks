@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client'
 
 import { Route, Routes, Link, BrowserRouter } from 'react-router-dom'
 
-import Modal from './modal'
+import Modal from './components/lazy-modals/modal-1'
 
 import { ModalProvider, useRegisterModal } from './react-modal-better-hooks/react-modal-better-hooks.esm.js'
 
-// import Normal from './components/normal'
+import Normal from './components/normal'
 // import Nested from './components/nested'
 // import Dynmaic from './components/dynmaic'
 
@@ -22,7 +22,7 @@ const AppRoute = () => {
     },
     modal1Lazy: {
       isLazy: true,
-      loader: () => import('./modal')
+      loader: () => import('./components/lazy-modals/modal-1')
     }
   })
 
@@ -35,11 +35,11 @@ const AppRoute = () => {
         <Link to="/nested">nested useage</Link>
         <Link to="/dynmaic">dynmaic useage</Link>
       </div>
-      {/* <Routes>
+      <Routes>
         <Route path="/normal" element={<Normal />} />
-        <Route path="/nested" element={<Nested />} />
-        <Route path="/dynmaic" element={<Dynmaic shouldLoadModal2={false} />} />
-      </Routes> */}
+        {/* <Route path="/nested" element={<Nested />} />
+        <Route path="/dynmaic" element={<Dynmaic shouldLoadModal2={false} />} /> */}
+      </Routes>
     </div>
   )
 }

@@ -75,46 +75,60 @@ var reducer = /*#__PURE__*/produce(function (state, action) {
   var _action$payload;
 
   var _ref = (_action$payload = action.payload) != null ? _action$payload : {},
-      payloadId = _ref.id;
+      payloadId = _ref.id,
+      payloadProps = _ref.props,
+      component = _ref.component,
+      loadFailed = _ref.loadFailed,
+      loaded = _ref.loaded,
+      __mergeProps___ = _ref.__mergeProps___;
 
   var allKeys = Array.from(state.keys());
   var registed = state.has(payloadId);
   var currentModal = state.get(payloadId);
 
   switch (action.type) {
-    // case ModalActionType.OpenModal:
-    //   if (registed) {
-    //     if (currentModal) {
-    //       currentModal.opened = true
-    //       currentModal.props = payloadProps
-    //     }
-    //   } else {
-    //     currentModal = Object.assign({}, action.payload, {
-    //       opened: true,
-    //     })
-    //   }
-    //   state.set(payloadId, currentModal as ModalItem)
-    //   return state
-    // case ModalActionType.UpdateModal:
-    //   if (currentModal) {
-    //     currentModal.opened = true
-    //     currentModal.props = payloadProps
-    //     state.set(payloadId, currentModal as ModalItem)
-    //   }
-    // return state
-    // case ModalActionType.CloseModal:
-    //   if (currentModal) {
-    //     currentModal.opened = false
-    //     state.set(payloadId, currentModal)
-    //   }
-    //   return state
-    // case ModalActionType.CloseAllModals:
-    //   allKeys.forEach((key: string) => {
-    //     currentModal = state.get(key) as ModalItem
-    //     currentModal.opened = false
-    //     state.set(key, currentModal)
-    //   })
-    //   return state
+    case ModalActionType.OpenModal:
+      if (currentModal) {
+        currentModal.visible = true;
+        currentModal.props = Object.assign({}, payloadProps != null ? payloadProps : {});
+        state.set(payloadId, currentModal);
+      }
+
+      return state;
+
+    case ModalActionType.UpdateModal:
+      if (currentModal) {
+        var oldPorps = {};
+
+        if (__mergeProps___) {
+          var _currentModal$props;
+
+          oldPorps = (_currentModal$props = currentModal.props) != null ? _currentModal$props : {};
+        }
+
+        currentModal.props = Object.assign({}, oldPorps, payloadProps != null ? payloadProps : {});
+        state.set(payloadId, currentModal);
+      }
+
+      return state;
+
+    case ModalActionType.CloseModal:
+      if (currentModal) {
+        currentModal.visible = false;
+        state.set(payloadId, currentModal);
+        console.log(currentModal);
+      }
+
+      return state;
+
+    case ModalActionType.CloseAllModals:
+      allKeys.forEach(function (key) {
+        currentModal = state.get(key);
+        currentModal.visible = false;
+        state.set(key, currentModal);
+      });
+      return state;
+
     case ModalActionType.RegisterModal:
       if (!registed) {
         state.set(payloadId, _extends({}, action.payload, {
@@ -132,34 +146,39 @@ var reducer = /*#__PURE__*/produce(function (state, action) {
       }
 
       return state;
-    // case ModalActionType.LazyModalLoaded:
-    //   if (currentModal) {
-    //     currentModal.loaded = loaded
-    //     currentModal.loadFailed = loadFailed
-    //     currentModal.loading = false
-    //     currentModal.component = component
-    //     state.set(payloadId, currentModal as ModalItem)
-    //   }
-    //   return state
+
+    case ModalActionType.LazyModalLoaded:
+      if (currentModal) {
+        currentModal.loaded = loaded;
+        currentModal.loadFailed = loadFailed;
+        currentModal.loading = false;
+        currentModal.component = component;
+        state.set(payloadId, currentModal);
+      }
+
+      return state;
 
     default:
       return state;
   }
 });
 
-var WrappedModalComponent = function WrappedModalComponent(_ref) {
+var WrappedModal = function WrappedModal(_ref) {
   var render = _ref.render,
-      modalProps = _ref.modalProps,
-      opened = _ref.opened,
-      renderIfClosed = _ref.renderIfClosed;
+      visible = _ref.visible,
+      renderProps = _ref.renderProps;
 
-  if (!opened && !renderIfClosed || !render) {
+  if (!visible || !render) {
     return null;
   }
 
-  return React.createElement(React.Fragment, null, render(modalProps));
+  var props = Object.assign({}, renderProps != null ? renderProps : {}, {
+    visible: visible
+  });
+  return React.createElement(React.Fragment, null, render(props));
 };
-var Mounter = function Mounter() {
+
+var ModalAutoMounter = function ModalAutoMounter() {
   var _useModalContext = useModalContext(),
       state = _useModalContext.state,
       dispatch = _useModalContext.dispatch;
@@ -172,11 +191,10 @@ var Mounter = function Mounter() {
       var entry = _step.value;
 
       if (entry.component) {
-        components.push(createElement(WrappedModalComponent, {
+        components.push(createElement(WrappedModal, {
           render: entry.component,
-          modalProps: {},
-          renderIfClosed: false,
-          opened: false,
+          renderProps: entry.props,
+          visible: entry.visible,
           key: entry.id
         }));
       }
@@ -198,9 +216,11 @@ var Mounter = function Mounter() {
         try {
           var loader = entry.loader;
           loader == null ? void 0 : loader().then(function (instance) {
-            console.log(instance);
             dispatch(ModalActionType.LazyModalLoaded, {
-              id: entry.id
+              id: entry.id,
+              component: instance["default"],
+              loadFailed: false,
+              loaded: true
             });
           });
         } catch (err) {}
@@ -245,7 +265,7 @@ var ModalProvider = function ModalProvider(_ref) {
   };
   return React.createElement(ModalContext.Provider, {
     value: value
-  }, React.createElement(React.Fragment, null, React.createElement(Mounter, null), children));
+  }, React.createElement(React.Fragment, null, React.createElement(ModalAutoMounter, null), children));
 };
 var useModalContext = function useModalContext() {
   return useContext(ModalContext);
@@ -255,11 +275,22 @@ var useOpenModal = function useOpenModal() {
   var _useState = useState(false);
 
   var _useModalContext = useModalContext(),
-      state = _useModalContext.state;
+      state = _useModalContext.state,
+      dispatch = _useModalContext.dispatch;
 
-  var open = function open(modalId, props) {
+  var open = function open(_ref) {
+    var modalId = _ref.modalId,
+        props = _ref.props;
     var modalItem = state.get(modalId);
-    throw new TypeError("modalId(" + modalId + ") doesn't exist, cannot find corresponding 'modal' component, please check this");
+
+    if (modalItem != null && modalItem.isLazy && !(modalItem != null && modalItem.loaded) && !modalItem.loading) {
+      return;
+    }
+
+    dispatch(ModalActionType.OpenModal, {
+      id: modalId,
+      props: props
+    });
   };
 
   return open;
@@ -269,27 +300,38 @@ var useCloseModal = function useCloseModal() {
   var _useModalContext = useModalContext(),
       dispatch = _useModalContext.dispatch;
 
-  var close = function close(modalId) {
+  var closeModal = function closeModal(modalId) {
     return dispatch(ModalActionType.CloseModal, {
       modalId: modalId
     });
   };
 
-  var closeAll = function closeAll() {
+  var closeAllModals = function closeAllModals() {
     return dispatch(ModalActionType.CloseAllModals);
   };
 
   return {
-    close: close,
-    closeAll: closeAll
+    closeModal: closeModal,
+    closeAllModals: closeAllModals
   };
 };
 
 var useUpdateModal = function useUpdateModal() {
-  var _useModalContext = useModalContext();
+  var _useModalContext = useModalContext(),
+      state = _useModalContext.state,
+      dispatch = _useModalContext.dispatch;
 
-  var update = function update() {};
-
+  var update = useCallback(function (_ref) {
+    var modalId = _ref.modalId,
+        merge = _ref.merge,
+        props = _ref.props;
+    var modalItem = state.get(modalId);
+    dispatch(ModalActionType.UpdateModal, {
+      id: modalId,
+      props: props,
+      __mergeProps___: merge
+    });
+  }, [state]);
   return update;
 };
 
@@ -299,9 +341,20 @@ var useRegisterModal = function useRegisterModal() {
         dispatch = _useModalContext.dispatch,
         state = _useModalContext.state;
 
+    var diffModals = useMemo(function () {
+      return Object.keys(modals).reduce(function (result, modalId) {
+        var _extends2;
+
+        if (state.get(modalId)) {
+          return result;
+        }
+
+        return _extends({}, result, (_extends2 = {}, _extends2[modalId] = modals[modalId], _extends2));
+      }, {});
+    }, [modals, state]);
     useEffect(function () {
-      Object.keys(modals).forEach(function (modalId) {
-        var registerItem = modals[modalId];
+      Object.keys(diffModals).forEach(function (modalId) {
+        var registerItem = diffModals[modalId];
         var modalItem = {
           id: modalId,
           isLazy: registerItem.isLazy,
@@ -317,7 +370,7 @@ var useRegisterModal = function useRegisterModal() {
 
         dispatch(ModalActionType.RegisterModal, modalItem);
       });
-    }, [modals, state]);
+    }, [diffModals]);
   };
 
   return register;

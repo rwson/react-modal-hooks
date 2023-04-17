@@ -29,7 +29,7 @@ export interface AddLazyModalParams {
 export declare type ActionsMap = {
     [ModalActionType.OpenModal]: OpenModalParams;
     [ModalActionType.RegisterModal]: AddLazyModalParams;
-    [ModalActionType.LoadLazyModal]: any;
+    [ModalActionType.LoadLazyModal]: CloseModalParams;
     [ModalActionType.LazyModalLoaded]: AddLazyModalParams;
     [ModalActionType.CloseModal]: CloseModalParams;
     [ModalActionType.RemoveModal]: CloseModalParams;
@@ -42,19 +42,16 @@ export declare type Actions = {
         payload: ActionsMap[Key];
     };
 }[keyof ActionsMap];
-export declare type ModalItem<T = any> = {
+export declare type ModalItem = {
     id: string;
     visible: boolean;
     isLazy?: boolean;
     loaded?: boolean;
     loading?: boolean;
     loadFailed?: boolean;
-    visible?: boolean;
     loader?: Importer;
     component?: ComponentType;
-    props?: {
-        [key: string]: any;
-    };
+    props?: Record<string, any>;
 };
 export declare type ModalStateMap = Map<string, ModalItem>;
 export declare type ModalRenderProps<T> = {
@@ -67,10 +64,6 @@ export declare type UseModalParams<T> = {
     keepAlive?: boolean;
     renderIfClosed?: boolean;
     render?: (props: ModalBasicProps<T>) => any;
-};
-export declare type UpdateModalParams<T> = {
-    merge?: boolean;
-    props: Partial<T>;
 };
 export declare type ModalBasicProps<T> = {
     [K in keyof T]: T[K];

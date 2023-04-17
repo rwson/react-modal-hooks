@@ -3,7 +3,7 @@ import { Importer, Actions, ModalStateMap } from './types';
 export declare const initialState: Map<any, any>;
 export declare const reducer: (base: ReadonlyMap<string, {
     readonly id: string;
-    readonly visible?: boolean | undefined;
+    readonly visible: boolean;
     readonly isLazy?: boolean | undefined;
     readonly loaded?: boolean | undefined;
     readonly loading?: boolean | undefined;
