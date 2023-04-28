@@ -43,12 +43,12 @@ export default () => {
 
 #### `useRegisterModal`
 
-This hooks is used to register the modals, it returns a function to register modals, and register modals by calling the function
+This hooks is used to register the modals, register modals by calling the hooks
 
 - Parameters
 
   ```typescript
-  registerModal(modals, isGlobal)
+  useRegisterModal(modals)
   ```
 
   | name                | description                                                  | default |
@@ -57,7 +57,6 @@ This hooks is used to register the modals, it returns a function to register mod
   | `modalId`.component | the modal `Component`                                        | NA      |
   | `modalId`.isLazy    | specify current modal is a lazy modal                        | false   |
   | `modalId`.loader    | lazy modal loader                                            | NA      |
-  | isGlobal            | isGlobal can specify to register the modal as a global mode, if it is `false`, the corresponding modal component will be removed when the component which called `registerModal` is unmount | `false` |
 
 - Useage
 
@@ -68,9 +67,7 @@ import { useRegisterModal } from 'react-modal-better-hooks'
 import Modal1 from 'path/to/modal1'
 
 const Page = () => {
-  const registerModal = useRegisterModal()
-  
-  registerModal({
+  useRegisterModal({
     modal1: {
       component: modal1
     },
@@ -95,7 +92,7 @@ This hooks is used to open modal, it returns a function to open modal, and open 
 - Parameters
 
   ```typescript
-  openModal(config)
+  openModal(modalId, props)
   ```
 
   | name    | description                                               | default |
@@ -170,14 +167,14 @@ The props of the modal are not necessarily completely unchanged, so if you need 
 - Parameters
 
   ```typescript
-  updateModal(config)
+  updateModal(modalId, config)
   ```
 
   | name    | description                                               | default |
   | ------- | --------------------------------------------------------- | ------- |
   | modalId | the id corresponding to the modal that needs to be opened | NA      |
-  | props   | the props that need to be passed into the modal component | `{}`    |
-  | merge   | if it's true, old props will be merged, otherwise, will override old props | `false`    |
+  | config.props   | the props that need to be passed into the modal component | NA    |
+  | config.merge   | if it's true, old props will be merged, otherwise, will override old props | `false`    |
 
 - Usage
 
@@ -196,12 +193,9 @@ const Page = () => {
   return (
   	<>
     	<div onClick={() => {
-        openModal({
-          modalId: 'idOfModalToOpen',
-          props: {
-            title: 'modalTitle',
-            content: 'modalContent'
-          }
+        openModal('idOfModalToOpen', {
+          title: 'modalTitle',
+          content: 'modalContent'
         })
         
 				/**
@@ -210,8 +204,7 @@ const Page = () => {
 					* during second render
 					*/
         setTimeOut(() => {
-          updateModal({
-            modalId: 'idOfModalToOpen',
+          updateModal('idOfModalToUpdate', {
             merge: true,
             props: {
               title: 'newModalTitle'
@@ -225,8 +218,7 @@ const Page = () => {
 					* during second render
 					*/
         setTimeOut(() => {
-          updateModal({
-            modalId: 'idOfModalToOpen',
+          updateModal('idOfModalToUpdate', {
             props: {
               title: 'newModalTitle',
               content: 'newModalContent'

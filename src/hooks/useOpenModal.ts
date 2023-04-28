@@ -5,24 +5,20 @@ import { useModalContext } from '../context'
 import { ModalItem } from '../types'
 import { WrappedModalComponent } from '../wrapped'
 
-interface OpenModalInput<T> {
-  readonly modalId: string
-  readonly props?: T
-}
+type UseOpenModalReturn<T> = (id: string, props?: T) => void | undefined
 
-type UseOpenModalReturn<T> = (params: OpenModalInput<T>) => void | undefined
-
-export const useOpenModal = <T>(): UseOpenModalReturn<T> => {
+export const useOpenModal = <T extends any>(): UseOpenModalReturn<T> => {
   const [ loading, setLoading ] = useState<boolean>(false)
   const { state, dispatch, defaultProps } = useModalContext()
 
-  const open = ({ modalId, props }: OpenModalInput<T>): void | undefined => {
-    const modalItem = state.get(modalId)
+  const open = (id: string, props?: T): void | undefined => {
+    const modalItem = state.get(id)
+    const modalProps = props ?? {}
 
     if (modalItem?.isLazy && !modalItem?.loaded && !modalItem.loading) {
       const loader = modalItem.loader
       dispatch(ModalActionType.LoadLazyModal, {
-        id: modalId
+        id
       })
 
       loader?.().then((instance) => {
@@ -35,8 +31,8 @@ export const useOpenModal = <T>(): UseOpenModalReturn<T> => {
 
         setTimeout(() => {
           dispatch(ModalActionType.OpenModal, {
-            id: modalId,
-            props
+            id,
+            props: modalProps
           })
         }, 30)
       })
@@ -44,8 +40,8 @@ export const useOpenModal = <T>(): UseOpenModalReturn<T> => {
     }
 
     dispatch(ModalActionType.OpenModal, {
-      id: modalId,
-      props
+      id,
+      props: modalProps
     })
   }
 

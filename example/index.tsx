@@ -8,15 +8,12 @@ import Modal from './components/lazy-modals/modal-1'
 import { ModalProvider, useRegisterModal } from './react-modal-better-hooks/react-modal-better-hooks.esm.js'
 
 import Normal from './components/normal'
-// import Nested from './components/nested'
-// import Dynmaic from './components/dynmaic'
+import Nested from './components/nested'
 
 import 'antd/dist/antd.css'
 
 const AppRoute = () => {
-  const registerModal = useRegisterModal()
-
-  registerModal({
+  useRegisterModal({
     modal1: {
       component: Modal
     },
@@ -37,8 +34,7 @@ const AppRoute = () => {
       </div>
       <Routes>
         <Route path="/normal" element={<Normal />} />
-        {/* <Route path="/nested" element={<Nested />} />
-        <Route path="/dynmaic" element={<Dynmaic shouldLoadModal2={false} />} /> */}
+        <Route path="/nested" element={<Nested />} />
       </Routes>
     </div>
   )

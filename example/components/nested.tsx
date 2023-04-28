@@ -1,56 +1,58 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 
-import { useModal, useCloseModal } from '../react-modal-better-hooks/react-modal-better-hooks.esm.js'
+import { useRegisterModal, useOpenModal, useCloseModal } from '../react-modal-better-hooks/react-modal-better-hooks.esm.js'
+
+
+const OutModal = (props) => {
+  const { closeModal } = useCloseModal()
+  const open = useOpenModal()
+
+  return (
+    <Modal {...props} onCancel={() => closeModal('out-modal')}>
+      <p>I'm Out Modal</p>
+      <Button onClick={() => open({
+        modalId: 'child-modal'
+      })}>
+        Open Nested Modal
+      </Button>
+    </Modal>
+  )
+}
+
+const ChildModal = (props) => {
+  const { closeModal, closeAllModals } = useCloseModal()
+
+  return (
+    <Modal {...props} onCancel={() => closeModal('child-modal')} width="400px">
+      <p>I'm Nested Modal</p>
+      <Button onClick={closeAllModals}>Close All Modals</Button>
+    </Modal>
+  )
+}
 
 export default () => {
-  const {
-    close,
-    closeAll
-  } = useCloseModal()
+  const open = useOpenModal()
 
-  const [ChildModal, { open: openNested }] = useModal({
-    id: 'child-modal',
-    render: (props) => {
-      return (
-        <Modal {...props} onCancel={() => close('child-modal')} width="400px">
-          <p>I'm Nested Modal</p>
-          <Button onClick={closeAll}>Close All Modals</Button>
-        </Modal>
-      )
-    }
-  })
-
-  const [OutModal, { open }] = useModal({
-    id: 'out-modal',
-    ignoreEvent: false,
-    render: (props) => {
-      console.log(props)
-
-      return (
-        <Modal {...props} onCancel={() => close('out-modal')}>
-          <p>I'm Out Modal</p>
-          <Button
-            onClick={() =>
-              openNested()
-            }
-          >
-            Open Nested Modal
-          </Button>
-        </Modal>
-      )
+  useRegisterModal({
+    'out-modal': {
+      component: OutModal
+    },
+    'child-modal': {
+      component: ChildModal
     }
   })
 
   return (
     <div>
       <Button
-        onClick={open}
+        onClick={() => open({
+          modalId: 'out-modal'
+        })}
       >
         Open Out Modal
       </Button>
-      {OutModal}
-      {ChildModal}
+      
     </div>
   );
 };

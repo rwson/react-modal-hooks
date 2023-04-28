@@ -12,61 +12,38 @@ interface ModalRegisterItem {
 
 type RegisterModalInput = Record<string, ModalRegisterItem>
 
-type UseRegisterModalReturn = (modals: RegisterModalInput, isGlobal?: boolean) => void
+export const useRegisterModal = (modals: RegisterModalInput): void => {
+  const { dispatch, state } = useModalContext()
+  const mountRef = useRef<boolean>(false)
 
-export const useRegisterModal = (): UseRegisterModalReturn => {
-  const register = (modals: RegisterModalInput, isGlobal?: boolean): void => {
-    const { dispatch, state } = useModalContext()
-    const mountRef = useRef<boolean>(false)
-
-    const diffModals = useMemo(() => {
-      return Object.keys(modals).reduce((result: RegisterModalInput, modalId: string) => {
-        if (state.get(modalId)) {
-          return result
-        }
-        
-        return {
-          ...result,
-          [modalId]: modals[modalId]
-        }
-      }, {})
-    }, [modals, state])
-
-    useEffect(() => {
-      Object.keys(diffModals).forEach((modalId: string) => {
-        const registerItem = diffModals[modalId]
-
-        const modalItem: Record<string, any> = {
-          id: modalId,
-          isLazy: registerItem.isLazy,
-          component: registerItem.component,
-          loader: registerItem.loader
-        }
-
-        if (modalItem.isLazy) {
-          modalItem.loaded = false
-          modalItem.loading = false
-          modalItem.loadFailed = false
-        }
-
-        dispatch(ModalActionType.RegisterModal, modalItem)
-      })
-    }, [diffModals])
-
-    useEffect(() => {
-      if (!mountRef.current) {
-        mountRef.current = true
+  const diffModals = useMemo(() => {
+    return Object.keys(modals).reduce((result: RegisterModalInput, modalId: string) => {
+      if (state.get(modalId)) {
+        return result
       }
-
-      return () => {
-        if (!isGlobal && mountRef.current) {
-          Object.keys(modals).forEach((id) => {
-            dispatch(ModalActionType.RemoveModal, { id })
-          })
-        }
+      
+      return {
+        ...result,
+        [modalId]: modals[modalId]
       }
-    }, [modals, isGlobal])
-  }
+    }, {})
+  }, [modals, state])
 
-  return register
+  useEffect(() => {
+    Object.keys(diffModals).forEach((modalId: string) => {
+      const registerItem = diffModals[modalId]
+      const modalItem: Record<string, any> = {
+        id: modalId,
+        isLazy: registerItem.isLazy,
+        component: registerItem.component,
+        loader: registerItem.loader
+      }
+      if (modalItem.isLazy) {
+        modalItem.loaded = false
+        modalItem.loading = false
+        modalItem.loadFailed = false
+      }
+      dispatch(ModalActionType.RegisterModal, modalItem)
+    })
+  }, [diffModals])
 }

@@ -37,8 +37,6 @@ export const reducer = produce(
       return state
 
       case ModalActionType.CloseModal:
-        console.log(action.type, currentModal)
-
         if (currentModal) {
           currentModal.visible = false
           state.set(payloadId, currentModal)

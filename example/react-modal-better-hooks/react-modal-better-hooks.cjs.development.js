@@ -121,8 +121,6 @@ var reducer = /*#__PURE__*/produce__default(function (state, action) {
       return state;
 
     case ModalActionType.CloseModal:
-      console.log(action.type, currentModal);
-
       if (currentModal) {
         currentModal.visible = false;
         state.set(payloadId, currentModal);
@@ -289,15 +287,14 @@ var useOpenModal = function useOpenModal() {
       state = _useModalContext.state,
       dispatch = _useModalContext.dispatch;
 
-  var open = function open(_ref) {
-    var modalId = _ref.modalId,
-        props = _ref.props;
-    var modalItem = state.get(modalId);
+  var open = function open(id, props) {
+    var modalItem = state.get(id);
+    var modalProps = props != null ? props : {};
 
     if (modalItem != null && modalItem.isLazy && !(modalItem != null && modalItem.loaded) && !modalItem.loading) {
       var loader = modalItem.loader;
       dispatch(ModalActionType.LoadLazyModal, {
-        id: modalId
+        id: id
       });
       loader == null ? void 0 : loader().then(function (instance) {
         dispatch(ModalActionType.LazyModalLoaded, {
@@ -308,8 +305,8 @@ var useOpenModal = function useOpenModal() {
         });
         setTimeout(function () {
           dispatch(ModalActionType.OpenModal, {
-            id: modalId,
-            props: props
+            id: id,
+            props: modalProps
           });
         }, 30);
       });
@@ -317,8 +314,8 @@ var useOpenModal = function useOpenModal() {
     }
 
     dispatch(ModalActionType.OpenModal, {
-      id: modalId,
-      props: props
+      id: id,
+      props: modalProps
     });
   };
 
@@ -350,13 +347,11 @@ var useUpdateModal = function useUpdateModal() {
       state = _useModalContext.state,
       dispatch = _useModalContext.dispatch;
 
-  var update = React.useCallback(function (_ref) {
-    var modalId = _ref.modalId,
-        merge = _ref.merge,
+  var update = React.useCallback(function (id, _ref) {
+    var merge = _ref.merge,
         props = _ref.props;
-    var modalItem = state.get(modalId);
     dispatch(ModalActionType.UpdateModal, {
-      id: modalId,
+      id: id,
       props: props,
       __mergeProps___: merge
     });
@@ -384,61 +379,42 @@ var useModalIsLoading = function useModalIsLoading(modalIds) {
   }, [state, modalIds]);
 };
 
-var useRegisterModal = function useRegisterModal() {
-  var register = function register(modals, isGlobal) {
-    var _useModalContext = useModalContext(),
-        dispatch = _useModalContext.dispatch,
-        state = _useModalContext.state;
+var useRegisterModal = function useRegisterModal(modals) {
+  var _useModalContext = useModalContext(),
+      dispatch = _useModalContext.dispatch,
+      state = _useModalContext.state;
 
-    var mountRef = React.useRef(false);
-    var diffModals = React.useMemo(function () {
-      return Object.keys(modals).reduce(function (result, modalId) {
-        var _extends2;
+  var mountRef = React.useRef(false);
+  var diffModals = React.useMemo(function () {
+    return Object.keys(modals).reduce(function (result, modalId) {
+      var _extends2;
 
-        if (state.get(modalId)) {
-          return result;
-        }
-
-        return _extends({}, result, (_extends2 = {}, _extends2[modalId] = modals[modalId], _extends2));
-      }, {});
-    }, [modals, state]);
-    React.useEffect(function () {
-      Object.keys(diffModals).forEach(function (modalId) {
-        var registerItem = diffModals[modalId];
-        var modalItem = {
-          id: modalId,
-          isLazy: registerItem.isLazy,
-          component: registerItem.component,
-          loader: registerItem.loader
-        };
-
-        if (modalItem.isLazy) {
-          modalItem.loaded = false;
-          modalItem.loading = false;
-          modalItem.loadFailed = false;
-        }
-
-        dispatch(ModalActionType.RegisterModal, modalItem);
-      });
-    }, [diffModals]);
-    React.useEffect(function () {
-      if (!mountRef.current) {
-        mountRef.current = true;
+      if (state.get(modalId)) {
+        return result;
       }
 
-      return function () {
-        if (!isGlobal && mountRef.current) {
-          Object.keys(modals).forEach(function (id) {
-            dispatch(ModalActionType.RemoveModal, {
-              id: id
-            });
-          });
-        }
+      return _extends({}, result, (_extends2 = {}, _extends2[modalId] = modals[modalId], _extends2));
+    }, {});
+  }, [modals, state]);
+  React.useEffect(function () {
+    Object.keys(diffModals).forEach(function (modalId) {
+      var registerItem = diffModals[modalId];
+      var modalItem = {
+        id: modalId,
+        isLazy: registerItem.isLazy,
+        component: registerItem.component,
+        loader: registerItem.loader
       };
-    }, [modals, isGlobal]);
-  };
 
-  return register;
+      if (modalItem.isLazy) {
+        modalItem.loaded = false;
+        modalItem.loading = false;
+        modalItem.loadFailed = false;
+      }
+
+      dispatch(ModalActionType.RegisterModal, modalItem);
+    });
+  }, [diffModals]);
 };
 
 produce.enableAllPlugins();

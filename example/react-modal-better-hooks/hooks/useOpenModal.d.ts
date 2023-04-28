@@ -1,7 +1,3 @@
-interface OpenModalInput<T> {
-    readonly modalId: string;
-    readonly props?: T;
-}
-declare type UseOpenModalReturn<T> = (params: OpenModalInput<T>) => void | undefined;
-export declare const useOpenModal: <T>() => UseOpenModalReturn<T>;
+declare type UseOpenModalReturn<T> = (id: string, props?: T) => void | undefined;
+export declare const useOpenModal: <T extends unknown>() => UseOpenModalReturn<T>;
 export {};

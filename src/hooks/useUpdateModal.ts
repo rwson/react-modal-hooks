@@ -5,21 +5,18 @@ import { useModalContext } from '../context'
 import { ModalItem } from '../types'
 
 interface UpdateModalInput<T> {
-  readonly modalId: string
-  readonly props?: T
   readonly merge?: boolean
+  readonly props: T
 }
 
-type UseUpdateModalReturn<T> = (params: UpdateModalInput<T>) => void
+type UseUpdateModalReturn<T> = (id: string, params: UpdateModalInput<T>) => void
 
 export const useUpdateModal = <T>(): UseUpdateModalReturn<T> => {
   const { state, dispatch } = useModalContext()
 
-  const update = useCallback(({ modalId, merge, props }: UpdateModalInput<T>): void => {
-    const modalItem = state.get(modalId)
-
+  const update = useCallback((id, { merge, props }: UpdateModalInput<T>): void => {
     dispatch(ModalActionType.UpdateModal, {
-      id: modalId,
+      id,
       props: (props as T)!,
       __mergeProps___: merge
     })
